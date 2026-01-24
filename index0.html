@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>车间二维码扫描系统</title>
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --primary-hover: #4f46e5;
+            --secondary-color: #8b5cf6;
+            --dark-bg: #0f172a;
+            --darker-bg: #020617;
+            --card-bg: #1e293b;
+            --card-hover: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-color: #334155;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.7);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.8);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.9);
+            --gradient-primary: linear-gradient(135deg, #6366f1, #8b5cf6);
+            --gradient-dark: linear-gradient(135deg, #1e293b, #0f172a);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: var(--darker-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: env(safe-area-inset-bottom);
+            background-image: 
+                radial-gradient(at 20% 30%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+                radial-gradient(at 80% 80%, rgba(139, 92, 246, 0.1) 0px, transparent 50%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        /* 头部样式 - 修改为与背景色一致 */
+        .header {
+            background: var(--darker-bg); /* 改为与背景色一致 */
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .title-section {
+            text-align: center;
+        }
+
+        .main-title {
+            font-size: 28px;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+            opacity: 0.9;
+        }
+
+        /* 控制按钮区域 */
+        .controls-section {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 8px;
+        }
+
+        .control-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 12px 24px;
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .control-btn:hover {
+            background: var(--card-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .control-btn:active {
+            transform: translateY(0);
+        }
+
+        .control-btn i {
+            font-size: 16px;
+        }
+
+        /* 分类折叠区域 */
+        .main-content {
+            padding: 32px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .category-collapse {
+            background: var(--card-bg);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--border-color);
+        }
+
+        .category-collapse:hover {
+            box-shadow: var(--shadow-xl);
+            transform: translateY(-2px);
+        }
+
+        /* 折叠按钮样式 - 修改为更小 */
+        .collapse-btn {
+            width: 100%;
+            background: transparent;
+            border: none;
+            padding: 18px 20px; /* 减少内边距，使按钮更小 */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .collapse-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        /* 分类图标 - 修改为更小 */
+        .category-icon {
+            width: 40px; /* 减小尺寸 */
+            height: 40px; /* 减小尺寸 */
+            background: var(--gradient-primary);
+            border-radius: var(--radius-md); /* 减小圆角 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px; /* 减小图标大小 */
+            color: white;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        /* 分类标题 - 修改为更小 */
+        .category-title {
+            font-size: 18px; /* 减小字体大小 */
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .category-count {
+            background: var(--dark-bg);
+            color: var(--text-secondary);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-left: 12px;
+        }
+
+        /* 折叠指示器 - 修改为更小 */
+        .collapse-indicator {
+            color: var(--text-secondary);
+            font-size: 20px; /* 减小图标大小 */
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .collapse-btn.collapsed .collapse-indicator {
+            transform: rotate(-90deg);
+        }
+
+        /* 折叠内容区域 */
+        .collapse-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--dark-bg);
+        }
+
+        .collapse-content.expanded {
+            max-height: 5000px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* 子分类样式 */
+        .subcategory {
+            padding: 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .subcategory:last-child {
+            border-bottom: none;
+        }
+
+        .subcategory-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .subcategory-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: white;
+        }
+
+        .subcategory-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* 二维码网格 */
+        .qr-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .qr-item {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .qr-item:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+            background: var(--card-hover);
+            border-color: var(--primary-color);
+        }
+
+        .qr-code-container {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            background: white;
+            border-radius: var(--radius-md);
+            padding: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .qr-code {
+            width: 100%;
+            height: 100%;
+            border-radius: var(--radius-sm);
+        }
+
+        .qr-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-md);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .qr-item:hover .qr-overlay {
+            opacity: 1;
+        }
+
+        .qr-info {
+            text-align: center;
+            width: 100%;
+        }
+
+        .qr-label {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        .qr-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        /* 页脚 */
+        .footer {
+            background: var(--dark-bg);
+            border-top: 1px solid var(--border-color);
+            padding: 24px 0;
+            margin-top: 48px;
+        }
+
+        .footer-content {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-top: 16px;
+        }
+
+        .footer-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: var(--primary-color);
+        }
+
+        /* 加载动画 */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--darker-bg);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.3s ease;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--border-color);
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 提示信息 */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--card-bg);
+            color: var(--text-primary);
+            padding: 16px 24px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
+            border: 1px solid var(--border-color);
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 12px;
+            }
+            
+            .main-title {
+                font-size: 24px;
+            }
+            
+            .controls-section {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .control-btn {
+                justify-content: center;
+            }
+            
+            .qr-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            
+            .category-header {
+                gap: 12px;
+            }
+            
+            .category-icon {
+                width: 36px; /* 在移动端进一步减小 */
+                height: 36px;
+                font-size: 18px;
+            }
+            
+            .category-title {
+                font-size: 16px; /* 在移动端进一步减小 */
+            }
+            
+            .collapse-btn {
+                padding: 16px 18px; /* 在移动端进一步减小 */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .qr-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .collapse-btn {
+                padding: 14px 16px; /* 在移动端进一步减小 */
+            }
+            
+            .subcategory {
+                padding: 16px;
+            }
+            
+            .qr-code-container {
+                width: 140px;
+                height: 140px;
+            }
+        }
+
+        /* 触摸设备优化 */
+        @media (hover: none) {
+            .qr-item:hover {
+                transform: none;
+                box-shadow: var(--shadow-md);
+            }
+            
+            .control-btn:active {
+                transform: scale(0.98);
+            }
+            
+            .collapse-btn:active {
+                background: rgba(255, 255, 255, 0.05);
+            }
+        }
+
+        /* 暗黑模式细节优化 */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--dark-bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--card-bg);
+            border-radius: var(--radius-md);
+            border: 2px solid var(--dark-bg);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--card-hover);
+        }
+
+        .glow {
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                box-shadow: 0 0 10px rgba(99, 102, 241, 0.3),
+                            0 0 20px rgba(99, 102, 241, 0.2);
+            }
+            to {
+                box-shadow: 0 0 20px rgba(99, 102, 241, 0.4),
+                            0 0 30px rgba(99, 102, 241, 0.3);
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="loader">
+        <div class="spinner"></div>
+    </div>
+
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="title-section">
+                    <h1 class="main-title">车间二维码扫描系统</h1>
+                    <p class="subtitle">点击分类展开查看二维码</p>
+                </div>
+                <div class="controls-section">
+                    <button class="control-btn" id="collapse-all">
+                        <i class="fas fa-compress-alt"></i>
+                        折叠所有分类
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content container">
+        <!-- 生产车间 -->
+        <div class="category-collapse">
+            <button class="collapse-btn collapsed" data-target="production">
+                <div class="category-header">
+                    <div class="category-icon">
+                        <i class="fas fa-industry"></i>
+                    </div>
+                    <div>
+                        <h2 class="category-title">生产车间</h2>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-down collapse-indicator"></i>
+            </button>
+            <div class="collapse-content" id="production">
+                <div class="subcategory">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                        <h3 class="subcategory-title">总装车间</h3>
+                    </div>
+                    <div class="qr-grid">
+                        <!-- 总装车间二维码 -->
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340822" alt="总装车间二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">总装车间</div>
+                                <div class="qr-desc">扫码访问总装车间信息页面</div>
+                            </div>
+                        </div>
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340823" alt="总装车间-地上1层二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">总装车间-地上1层</div>
+                                <div class="qr-desc">扫码访问地上1层详细信息</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 焊装车间 -->
+                <div class="subcategory">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon">
+                            <i class="fas fa-wrench"></i>
+                        </div>
+                        <h3 class="subcategory-title">焊装车间</h3>
+                    </div>
+                    <div class="qr-grid">
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340824" alt="焊装车间二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">焊装车间</div>
+                                <div class="qr-desc">扫码访问焊装车间信息页面</div>
+                            </div>
+                        </div>
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340825" alt="焊装车间-地上1层二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">焊装车间-地上1层</div>
+                                <div class="qr-desc">扫码访问地上1层详细信息</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 电泳车间 -->
+                <div class="subcategory">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon">
+                            <i class="fas fa-tint"></i>
+                        </div>
+                        <h3 class="subcategory-title">电泳车间</h3>
+                    </div>
+                    <div class="qr-grid">
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340826" alt="电泳车间二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">电泳车间</div>
+                                <div class="qr-desc">扫码访问电泳车间信息页面</div>
+                            </div>
+                        </div>
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340827" alt="电泳车间-地上1层二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">电泳车间-地上1层</div>
+                                <div class="qr-desc">扫码访问地上1层详细信息</div>
+                            </div>
+                        </div>
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340828" alt="电泳车间-地上2层二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">电泳车间-地上2层</div>
+                                <div class="qr-desc">扫码访问地上2层详细信息</div>
+                            </div>
+                        </div>
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340829" alt="电泳车间-地上3层二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">电泳车间-地上3层</div>
+                                <div class="qr-desc">扫码访问地上3层详细信息</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 涂装车间 -->
+                <div class="subcategory">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon">
+                            <i class="fas fa-paint-roller"></i>
+                        </div>
+                        <h3 class="subcategory-title">涂装车间</h3>
+                    </div>
+                    <div class="qr-grid">
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340830" alt="涂装车间二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">涂装车间</div>
+                                <div class="qr-desc">扫码访问涂装车间信息页面</div>
+                            </div>
+                        </div>
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340831" alt="涂装车间-地上1层二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">涂装车间-地上1层</div>
+                                <div class="qr-desc">扫码访问地上1层详细信息</div>
+                            </div>
+                        </div>
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340832" alt="涂装车间-地上2层二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">涂装车间-地上2层</div>
+                                <div class="qr-desc">扫码访问地上2层详细信息</div>
+                            </div>
+                        </div>
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340833" alt="涂装车间-地上3层二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">涂装车间-地上3层</div>
+                                <div class="qr-desc">扫码访问地上3层详细信息</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 特种涂装车间 -->
+                <div class="subcategory">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon">
+                            <i class="fas fa-spray-can"></i>
+                        </div>
+                        <h3 class="subcategory-title">特种涂装车间</h3>
+                    </div>
+                    <div class="qr-grid">
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340835" alt="特种涂装车间二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">特种涂装车间</div>
+                                <div class="qr-desc">扫码访问特种涂装车间信息</div>
+                            </div>
+                        </div>
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340836" alt="特种涂装车间-地上1层二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">特种涂装车间-地上1层</div>
+                                <div class="qr-desc">扫码访问地上1层详细信息</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 试制车间 -->
+                <div class="subcategory">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon">
+                            <i class="fas fa-flask"></i>
+                        </div>
+                        <h3 class="subcategory-title">试制车间</h3>
+                    </div>
+                    <div class="qr-grid">
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340839" alt="试制车间二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">试制车间</div>
+                                <div class="qr-desc">扫码访问试制车间信息页面</div>
+                            </div>
+                        </div>
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340840" alt="试制车间-地上1层二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">试制车间-地上1层</div>
+                                <div class="qr-desc">扫码访问地上1层详细信息</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 制件车间 -->
+                <div class="subcategory">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon">
+                            <i class="fas fa-cut"></i>
+                        </div>
+                        <h3 class="subcategory-title">制件车间</h3>
+                    </div>
+                    <div class="qr-grid">
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340841" alt="制件车间二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">制件车间</div>
+                                <div class="qr-desc">扫码访问制件车间信息页面</div>
+                            </div>
+                        </div>
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340842" alt="制件车间-地上1层二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">制件车间-地上1层</div>
+                                <div class="qr-desc">扫码访问地上1层详细信息</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 办公楼 -->
+        <div class="category-collapse">
+            <button class="collapse-btn collapsed" data-target="office">
+                <div class="category-header">
+                    <div class="category-icon">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <div>
+                        <h2 class="category-title">办公楼</h2>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-down collapse-indicator"></i>
+            </button>
+            <div class="collapse-content" id="office">
+                <!-- A栋办公楼 -->
+                <div class="subcategory">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <h3 class="subcategory-title">A栋办公楼</h3>
+                    </div>
+                    <div class="qr-grid">
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340896" alt="A栋办公楼二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">A栋办公楼</div>
+                                <div class="qr-desc">扫码访问A栋办公楼信息</div>
+                            </div>
+                        </div>
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340897" alt="A栋办公楼-地上1层二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">A栋办公楼-地上1层</div>
+                                <div class="qr-desc">扫码访问地上1层详细信息</div>
+                            </div>
+                        </div>
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340898" alt="A栋办公楼-地上2层二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">A栋办公楼-地上2层</div>
+                                <div class="qr-desc">扫码访问地上2层详细信息</div>
+                            </div>
+                        </div>
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340899" alt="A栋办公楼-地上3层二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">A栋办公楼-地上3层</div>
+                                <div class="qr-desc">扫码访问地上3层详细信息</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- B栋办公楼 -->
+                <div class="subcategory">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <h3 class="subcategory-title">B栋办公楼</h3>
+                    </div>
+                    <div class="qr-grid">
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340900" alt="B栋办公楼二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">B栋办公楼</div>
+                                <div class="qr-desc">扫码访问B栋办公楼信息</div>
+                            </div>
+                        </div>
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340901" alt="B栋办公楼-地上1层二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">B栋办公楼-地上1层</div>
+                                <div class="qr-desc">扫码访问地上1层详细信息</div>
+                            </div>
+                        </div>
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340902" alt="B栋办公楼-地上2层二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">B栋办公楼-地上2层</div>
+                                <div class="qr-desc">扫码访问地上2层详细信息</div>
+                            </div>
+                        </div>
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340903" alt="B栋办公楼-地上3层二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">B栋办公楼-地上3层</div>
+                                <div class="qr-desc">扫码访问地上3层详细信息</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- C栋办公楼 -->
+                <div class="subcategory">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <h3 class="subcategory-title">C栋办公楼</h3>
+                    </div>
+                    <div class="qr-grid">
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006341007" alt="C栋办公楼二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">C栋办公楼</div>
+                                <div class="qr-desc">扫码访问C栋办公楼信息</div>
+                            </div>
+                        </div>
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006341008" alt="C栋办公楼-地上1层二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">C栋办公楼-地上1层</div>
+                                <div class="qr-desc">扫码访问地上1层详细信息</div>
+                            </div>
+                        </div>
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006341009" alt="C栋办公楼-地上2层二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">C栋办公楼-地上2层</div>
+                                <div class="qr-desc">扫码访问地上2层详细信息</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- E栋办公楼 -->
+                <div class="subcategory">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <h3 class="subcategory-title">E栋办公楼</h3>
+                    </div>
+                    <div class="qr-grid">
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006341172" alt="E栋办公楼二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">E栋办公楼</div>
+                                <div class="qr-desc">扫码访问E栋办公楼信息</div>
+                            </div>
+                        </div>
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006341173" alt="E栋办公楼-地上1层二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">E栋办公楼-地上1层</div>
+                                <div class="qr-desc">扫码访问地上1层详细信息</div>
+                            </div>
+                        </div>
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006341174" alt="E栋办公楼-地上2层二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">E栋办公楼-地上2层</div>
+                                <div class="qr-desc">扫码访问地上2层详细信息</div>
+                            </div>
+                        </div>
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006341175" alt="E栋办公楼-地上3层二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">E栋办公楼-地上3层</div>
+                                <div class="qr-desc">扫码访问地上3层详细信息</div>
+                            </div>
+                        </div>
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006341176" alt="E栋办公楼-地上4层二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">E栋办公楼-地上4层</div>
+                                <div class="qr-desc">扫码访问地上4层详细信息</div>
+                            </div>
+                        </div>
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006341177" alt="E栋办公楼-地上5层二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">E栋办公楼-地上5层</div>
+                                <div class="qr-desc">扫码访问地上5层详细信息</div>
+                            </div>
+                        </div>
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006341178" alt="E栋办公楼-地上6层二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">E栋办公楼-地上6层</div>
+                                <div class="qr-desc">扫码访问地上6层详细信息</div>
+                            </div>
+                        </div>
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006341179" alt="E栋办公楼-地下1层二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">E栋办公楼-地下1层</div>
+                                <div class="qr-desc">扫码访问地下1层详细信息</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 设施与站房 -->
+        <div class="category-collapse">
+            <button class="collapse-btn collapsed" data-target="facilities">
+                <div class="category-header">
+                    <div class="category-icon">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <div>
+                        <h2 class="category-title">设施与站房</h2>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-down collapse-indicator"></i>
+            </button>
+            <div class="collapse-content" id="facilities">
+                <!-- 清洁楼 -->
+                <div class="subcategory">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon">
+                            <i class="fas fa-broom"></i>
+                        </div>
+                        <h3 class="subcategory-title">清洁楼</h3>
+                    </div>
+                    <div class="qr-grid">
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340868" alt="清洁楼二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">清洁楼</div>
+                                <div class="qr-desc">扫码访问清洁楼信息页面</div>
+                            </div>
+                        </div>
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340869" alt="清洁楼-地上1层二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">清洁楼-地上1层</div>
+                                <div class="qr-desc">扫码访问地上1层详细信息</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 充电桩 -->
+                <div class="subcategory">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon">
+                            <i class="fas fa-charging-station"></i>
+                        </div>
+                        <h3 class="subcategory-title">充电桩</h3>
+                    </div>
+                    <div class="qr-grid">
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340870" alt="充电桩二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">充电桩</div>
+                                <div class="qr-desc">扫码访问充电桩信息页面</div>
+                            </div>
+                        </div>
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340871" alt="充电桩-地上1层二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">充电桩-地上1层</div>
+                                <div class="qr-desc">扫码访问地上1层详细信息</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 联合动力站房 -->
+                <div class="subcategory">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <h3 class="subcategory-title">联合动力站房</h3>
+                    </div>
+                    <div class="qr-grid">
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006343282" alt="联合动力站房二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">联合动力站房</div>
+                                <div class="qr-desc">扫码访问联合动力站房信息</div>
+                            </div>
+                        </div>
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006343283" alt="联合动力站房-地上1层二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">联合动力站房-地上1层</div>
+                                <div class="qr-desc">扫码访问地上1层详细信息</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 污水处理站 -->
+                <div class="subcategory">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon">
+                            <i class="fas fa-water"></i>
+                        </div>
+                        <h3 class="subcategory-title">污水处理站</h3>
+                    </div>
+                    <div class="qr-grid">
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006343285" alt="污水处理站二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">污水处理站</div>
+                                <div class="qr-desc">扫码访问污水处理站信息</div>
+                            </div>
+                        </div>
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006343286" alt="污水处理站-地上1层二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">污水处理站-地上1层</div>
+                                <div class="qr-desc">扫码访问地上1层详细信息</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 服务中心 -->
+        <div class="category-collapse">
+            <button class="collapse-btn collapsed" data-target="service">
+                <div class="category-header">
+                    <div class="category-icon">
+                        <i class="fas fa-concierge-bell"></i>
+                    </div>
+                    <div>
+                        <h2 class="category-title">服务中心</h2>
+
+                    </div>
+                </div>
+                <i class="fas fa-chevron-down collapse-indicator"></i>
+            </button>
+            <div class="collapse-content" id="service">
+                <!-- 实验中心 -->
+                <div class="subcategory">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon">
+                            <i class="fas fa-microscope"></i>
+                        </div>
+                        <h3 class="subcategory-title">实验中心</h3>
+                    </div>
+                    <div class="qr-grid">
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006341241" alt="实验中心二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">实验中心</div>
+                                <div class="qr-desc">扫码访问实验中心信息页面</div>
+                            </div>
+                        </div>
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006341242" alt="实验中心-地上1层二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">实验中心-地上1层</div>
+                                <div class="qr-desc">扫码访问地上1层详细信息</div>
+                            </div>
+                        </div>
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006341311" alt="实验中心-地上2层二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">实验中心-地上2层</div>
+                                <div class="qr-desc">扫码访问地上2层详细信息</div>
+                            </div>
+                        </div>
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006341312" alt="实验中心-地上3层二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">实验中心-地上3层</div>
+                                <div class="qr-desc">扫码访问地上3层详细信息</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 客户服务中心 -->
+                <div class="subcategory">
+                    <div class="subcategory-header">
+                        <div class="subcategory-icon">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <h3 class="subcategory-title">客户服务中心</h3>
+                    </div>
+                    <div class="qr-grid">
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006343279" alt="客户服务中心二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">客户服务中心</div>
+                                <div class="qr-desc">扫码访问客户服务中心信息</div>
+                            </div>
+                        </div>
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006343280" alt="客户服务中心-地上1层二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">客户服务中心-地上1层</div>
+                                <div class="qr-desc">扫码访问地上1层详细信息</div>
+                            </div>
+                        </div>
+                        <div class="qr-item">
+                            <div class="qr-code-container">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006343281" alt="客户服务中心-地上2层二维码" class="qr-code">
+                            </div>
+                            <div class="qr-info">
+                                <div class="qr-label">客户服务中心-地上2层</div>
+                                <div class="qr-desc">扫码访问地上2层详细信息</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 隐藏加载动画
+            const loader = document.querySelector('.loader');
+            setTimeout(() => {
+                loader.style.opacity = '0';
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                }, 300);
+            }, 500);
+
+            // 获取所有折叠按钮
+            const collapseButtons = document.querySelectorAll('.collapse-btn');
+            
+            // 为每个折叠按钮添加点击事件
+            collapseButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const targetId = this.getAttribute('data-target');
+                    const content = document.getElementById(targetId);
+                    const icon = this.querySelector('.collapse-indicator');
+                    
+                    // 切换按钮状态
+                    this.classList.toggle('collapsed');
+                    
+                    // 切换内容区域状态
+                    if (content.classList.contains('expanded')) {
+                        content.classList.remove('expanded');
+                    } else {
+                        content.classList.add('expanded');
+                    }
+                    
+                    // 添加触觉反馈（如果支持）
+                    if ('vibrate' in navigator) {
+                        navigator.vibrate(20);
+                    }
+                });
+            });
+            
+            // 折叠所有按钮
+            document.getElementById('collapse-all').addEventListener('click', function() {
+                collapseButtons.forEach(button => {
+                    const targetId = button.getAttribute('data-target');
+                    const content = document.getElementById(targetId);
+                    content.classList.remove('expanded');
+                });
+            });
+            
+            // 显示提示信息
+            function showToast(message) {
+                const toast = document.getElementById('toast');
+                toast.textContent = message;
+                toast.classList.add('show');
+                
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            }
+            
+            // 为二维码添加长按保存功能
+            let pressTimer;
+            document.querySelectorAll('.qr-code-container').forEach(container => {
+                const img = container.querySelector('.qr-code');
+                
+                container.addEventListener('touchstart', function(e) {
+                    pressTimer = setTimeout(() => {
+                        showToast('长按二维码可保存到相册');
+                    }, 800);
+                });
+                
+                container.addEventListener('touchend', function() {
+                    clearTimeout(pressTimer);
+                });
+                
+                container.addEventListener('touchmove', function() {
+                    clearTimeout(pressTimer);
+                });
+            });
+            
+            // 初始化所有分类为折叠状态
+            collapseButtons.forEach(button => {
+                const targetId = button.getAttribute('data-target');
+                const content = document.getElementById(targetId);
+                content.classList.remove('expanded');
+            });
+        });
+    </script>
+</body>
+</html>
