@@ -1,0 +1,2857 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🥷 弱水三千只取一瓢</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 引入QR码生成库 -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+    <style>
+        /* ========== 页面加载动画 ========== */
+        #page-loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-dark, #0f172a);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        #page-loading.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loading-logo {
+            font-size: 3rem;
+            color: var(--primary-color, #6366f1);
+            margin-bottom: 2rem;
+            animation: pulse 2s infinite;
+        }
+
+        .loading-text {
+            color: var(--text-primary, #f1f5f9);
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .loading-spinner-container {
+            position: relative;
+            width: 80px;
+            height: 80px;
+        }
+
+        .spinner-circle {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 4px solid transparent;
+        }
+
+        .spinner-circle-outer {
+            border-top: 4px solid var(--primary-color, #6366f1);
+            border-right: 4px solid var(--primary-color, #6366f1);
+            border-bottom: 4px solid transparent;
+            border-left: 4px solid transparent;
+            animation: spin 1s linear infinite;
+        }
+
+        .spinner-circle-inner {
+            top: 10px;
+            left: 10px;
+            width: 60px;
+            height: 60px;
+            border-top: 4px solid var(--secondary-color, #8b5cf6);
+            border-right: 4px solid var(--secondary-color, #8b5cf6);
+            border-bottom: 4px solid transparent;
+            border-left: 4px solid transparent;
+            animation: spin 0.8s linear infinite reverse;
+        }
+
+        .loading-progress {
+            margin-top: 1.5rem;
+            width: 200px;
+            height: 4px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .loading-progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--primary-color, #6366f1), var(--secondary-color, #8b5cf6));
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.05);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* 手机端优化 */
+        @media (max-width: 768px) {
+            .loading-logo {
+                font-size: 2.5rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .loading-text {
+                font-size: 1rem;
+                margin-bottom: 1.5rem;
+                padding: 0 20px;
+            }
+
+            .loading-spinner-container {
+                width: 60px;
+                height: 60px;
+            }
+
+            .spinner-circle-inner {
+                top: 8px;
+                left: 8px;
+                width: 44px;
+                height: 44px;
+            }
+
+            .loading-progress {
+                width: 180px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .loading-logo {
+                font-size: 2rem;
+                margin-bottom: 1.2rem;
+            }
+
+            .loading-text {
+                font-size: 0.9rem;
+                margin-bottom: 1.2rem;
+            }
+
+            .loading-spinner-container {
+                width: 50px;
+                height: 50px;
+            }
+
+            .spinner-circle-inner {
+                top: 6px;
+                left: 6px;
+                width: 38px;
+                height: 38px;
+            }
+
+            .loading-progress {
+                width: 160px;
+            }
+        }
+
+        /* ========== 原有样式 ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        :root {
+            --primary-color: #6366f1;
+            --primary-dark: #4f46e5;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --bg-card-light: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border-color: #475569;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --collapse-color: #ef4444; /* 新增：折叠按钮颜色 */
+            --secondary-color: #8b5cf6;
+            --darker-bg: #020617;
+            --text-muted: #64748b;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.7);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.8);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.9);
+            --gradient-primary: linear-gradient(135deg, #6366f1, #8b5cf6);
+            --gradient-dark: linear-gradient(135deg, #1e293b, #0f172a);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+        }
+        
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 16px;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(79, 70, 229, 0.08) 0%, transparent 50%);
+        }
+        
+        /* 欢迎弹窗样式 */
+        .welcome-modal {
+            display: flex; /* 改为flex，默认显示 */
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(15, 23, 42, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        
+        .welcome-modal.hidden {
+            display: none; /* 使用hidden类来隐藏 */
+        }
+        
+        .modal-content {
+            background-color: var(--bg-card);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            border: 2px solid var(--primary-color);
+            animation: modalAppear 0.5s ease-out;
+        }
+        
+        @keyframes modalAppear {
+            from {
+                opacity: 0;
+                transform: translateY(-30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        .modal-icon {
+            font-size: 4rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 2rem;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+        }
+        
+        .modal-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 30px;
+        }
+        
+        .modal-btn {
+            padding: 18px 30px;
+            border: none;
+            border-radius: 14px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .modal-btn.inspection {
+            background-color: var(--success-color);
+            color: white;
+        }
+        
+        .modal-btn.inspection:hover {
+            background-color: #0da271;
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+        }
+        
+        .modal-btn.clock {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .modal-btn.clock:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
+        }
+        
+        .modal-btn i {
+            font-size: 1.3rem;
+        }
+        
+        /* 打卡弹窗样式 */
+        .clock-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(15, 23, 42, 0.95);
+            z-index: 1001;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        
+        .clock-modal.active {
+            display: flex;
+        }
+        
+        .clock-modal-content {
+            background-color: var(--bg-card);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            border: 2px solid var(--success-color);
+            animation: modalAppear 0.5s ease-out;
+        }
+        
+        .clock-modal-header {
+            margin-bottom: 25px;
+        }
+        
+        .clock-modal-title {
+            font-size: 1.8rem;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        
+        .clock-modal-subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+        
+        .clock-qr-container {
+            background-color: var(--bg-card-light);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 2px solid var(--border-color);
+        }
+        
+        .clock-qr-placeholder {
+            width: 250px;
+            height: 250px;
+            background-color: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            padding: 10px;
+        }
+        
+        .clock-qr-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        .clock-info {
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .clock-code {
+            font-family: 'Courier New', monospace;
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .clock-url {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            word-break: break-all;
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .clock-modal-buttons {
+            margin-top: 25px;
+        }
+        
+        .clock-close-btn {
+            padding: 14px 30px;
+            background-color: var(--bg-card-light);
+            border: none;
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            font-size: 1rem;
+        }
+        
+        .clock-close-btn:hover {
+            background-color: var(--border-color);
+            transform: translateY(-3px);
+        }
+        
+        /* 车间选择弹窗 */
+        .facility-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(15, 23, 42, 0.95);
+            z-index: 1002;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        
+        .facility-modal.active {
+            display: flex;
+        }
+        
+        .facility-modal-content {
+            background-color: var(--bg-card);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 900px;
+            width: 95%;
+            max-height: 85vh;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            border: 2px solid var(--primary-color);
+            animation: modalAppear 0.5s ease-out;
+        }
+        
+        .facility-modal-header {
+            margin-bottom: 25px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .facility-modal-title {
+            font-size: 1.8rem;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        
+        .facility-modal-subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+        
+        .facility-close-btn {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: var(--bg-card-light);
+            border: none;
+            border-radius: 10px;
+            color: var(--text-primary);
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        
+        .facility-close-btn:hover {
+            background-color: var(--border-color);
+            transform: translateY(-3px);
+        }
+        
+        .facility-buttons-container {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+        
+        .facility-buttons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 18px;
+        }
+        
+        .facility-btn {
+            padding: 20px 15px;
+            background-color: var(--bg-card-light);
+            border: none;
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .facility-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--primary-color);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .facility-btn:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-6px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);
+        }
+        
+        .facility-btn:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .facility-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+        }
+        
+        .facility-btn.active::before {
+            transform: scaleX(1);
+        }
+        
+        /* 移除超纲设施码的特殊样式 */
+        .facility-btn .type-tag {
+            font-size: 0.8rem;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 4px 12px;
+            border-radius: 10px;
+            margin-top: 10px;
+            font-weight: normal;
+        }
+        
+        /* 主内容 - 二维码展示页面 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0;
+            display: none;
+        }
+        
+        .container.active {
+            display: block;
+        }
+        
+        .content {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        
+        .qr-display {
+            background-color: var(--bg-card);
+            border-radius: 16px;
+            padding: 24px 16px;
+            box-shadow: 0 8px 25px var(--shadow-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .qr-display h2 {
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
+            width: 100%;
+            text-align: center;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        
+        .qr-display-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        
+        /* 返回选择按钮 - 独立样式 */
+        .back-to-facility-container {
+            position: absolute;
+            top: 24px;
+            left: 24px;
+            z-index: 10;
+        }
+        
+        .back-to-facility-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            background-color: var(--bg-card-light);
+            color: var(--text-primary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            white-space: nowrap;
+        }
+        
+        .back-to-facility-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 18px rgba(99, 102, 241, 0.4);
+        }
+        
+        .back-to-facility-btn i {
+            font-size: 1rem;
+        }
+        
+        /* 二维码容器 - 添加点击效果 */
+        .qr-code-container {
+            background-color: var(--bg-card-light);
+            border-radius: 16px;
+            padding: 24px;
+            width: 100%;
+            max-width: 320px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            margin-bottom: 10px;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .qr-code-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .qr-code-container.facility-mode-active {
+            border: 2px solid var(--primary-color);
+            box-shadow: 0 12px 30px rgba(99, 102, 241, 0.3);
+        }
+        
+        .qr-placeholder {
+            width: 100%;
+            max-width: 280px;
+            height: 280px;
+            background-color: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            border: 2px solid var(--border-color);
+            overflow: hidden;
+            position: relative;
+            padding: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .qr-placeholder:hover {
+            border-color: var(--primary-color);
+        }
+        
+        .qr-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        /* 设施码模式提示 */
+        .facility-mode-hint {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--primary-color);
+            color: white;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+            z-index: 5;
+            display: none;
+        }
+        
+        .qr-code-container.facility-mode-active .facility-mode-hint {
+            display: block;
+        }
+        
+        .qr-info {
+            text-align: center;
+            width: 100%;
+        }
+        
+        .qr-title {
+            font-size: 1.3rem;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            font-weight: 700;
+            line-height: 1.4;
+            padding: 0 10px;
+        }
+        
+        .qr-code {
+            font-family: 'Courier New', monospace;
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 12px;
+            border-radius: 10px;
+            margin: 16px 0;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            letter-spacing: 1px;
+            overflow-x: auto;
+            white-space: nowrap;
+            width: 100%;
+            border: 1px solid var(--border-color);
+        }
+        
+        .qr-url-container {
+            margin: 16px 0;
+            width: 100%;
+        }
+        
+        .qr-url-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            text-align: left;
+        }
+        
+        .qr-url {
+            font-family: 'Courier New', monospace;
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            color: var(--text-primary);
+            word-break: break-all;
+            max-height: 100px;
+            overflow-y: auto;
+            width: 100%;
+            text-align: left;
+            border: 1px solid var(--border-color);
+            line-height: 1.5;
+        }
+        
+        .instruction {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 16px;
+            text-align: center;
+            padding: 0 10px;
+        }
+        
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            width: 100%;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 16px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            width: 100%;
+            justify-content: center;
+            max-width: 300px;
+        }
+        
+        .action-btn {
+            padding: 14px 24px;
+            border: none;
+            border-radius: 12px;
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            max-width: 200px;
+            font-size: 1rem;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .action-btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 18px rgba(99, 102, 241, 0.4);
+        }
+        
+        .action-btn.next {
+            background-color: var(--success-color);
+        }
+        
+        .action-btn.next:hover {
+            background-color: #0da271;
+        }
+        
+        .action-btn:disabled {
+            background-color: var(--border-color);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        /* ============== 修改后的车间二维码扫描系统页面样式 ============== */
+        .qr-scan-system {
+            display: none;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0;
+        }
+        
+        .qr-scan-system.active {
+            display: block;
+        }
+        
+        /* 移除黑色横幅头部样式 */
+        .qr-scan-header {
+            background: transparent;
+            border-bottom: none;
+            padding: 10px 0 20px 0;
+            position: relative;
+            top: 0;
+            z-index: 10;
+            margin-bottom: 24px;
+        }
+        
+        .qr-scan-header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .qr-scan-title-section {
+            text-align: center;
+            background-color: var(--bg-card);
+            border-radius: var(--radius-xl);
+            padding: 24px 20px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-color);
+        }
+        
+        .qr-scan-main-title {
+            font-size: 28px;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+        
+        .qr-scan-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+            opacity: 0.9;
+        }
+        
+        /* 控制按钮区域 */
+        .qr-scan-controls-section {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 8px;
+            background-color: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+        }
+        
+        /* 使用统一的控制按钮样式 */
+        .control-btn {
+            background: var(--bg-card-light);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 12px 24px;
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .control-btn:hover {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .control-btn:active {
+            transform: translateY(0);
+        }
+        
+        .control-btn i {
+            font-size: 16px;
+        }
+        
+        /* 修改：全部折叠按钮颜色 */
+        .control-btn.collapse-all {
+            background-color: var(--collapse-color);
+            border-color: var(--collapse-color);
+            color: white;
+        }
+        
+        .control-btn.collapse-all:hover {
+            background-color: #dc2626;
+            border-color: #dc2626;
+        }
+        
+        .control-btn.back {
+            background-color: var(--bg-card-light);
+            color: var(--text-primary);
+        }
+        
+        .control-btn.back:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+        
+        /* 分类折叠区域 */
+        .qr-scan-main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            padding-bottom: 32px;
+        }
+        
+        .category-collapse {
+            background: var(--bg-card);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--border-color);
+        }
+        
+        .category-collapse:hover {
+            box-shadow: var(--shadow-xl);
+            transform: translateY(-2px);
+        }
+        
+        /* 折叠按钮样式 */
+        .collapse-btn {
+            width: 100%;
+            background: transparent;
+            border: none;
+            padding: 18px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .collapse-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        /* 分类图标 */
+        .category-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+        
+        /* 分类标题 */
+        .category-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .category-count {
+            background: var(--bg-dark);
+            color: var(--text-secondary);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-left: 12px;
+        }
+        
+        /* 折叠指示器 */
+        .collapse-indicator {
+            color: var(--text-secondary);
+            font-size: 20px;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .collapse-btn.collapsed .collapse-indicator {
+            transform: rotate(-90deg);
+        }
+        
+        /* 折叠内容区域 */
+        .collapse-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--bg-dark);
+        }
+        
+        .collapse-content.expanded {
+            max-height: 5000px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        /* 子分类样式 */
+        .subcategory {
+            padding: 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .subcategory:last-child {
+            border-bottom: none;
+        }
+        
+        .subcategory-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .subcategory-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: white;
+        }
+        
+        .subcategory-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        /* 二维码网格 - 使用index0.html的展示效果 */
+        .qr-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        
+        .qr-item {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .qr-item:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+            background: var(--bg-card-light);
+            border-color: var(--primary-color);
+        }
+        
+        .qr-code-container-new {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            background: white;
+            border-radius: var(--radius-md);
+            padding: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        .qr-code-img {
+            width: 100%;
+            height: 100%;
+            border-radius: var(--radius-sm);
+            object-fit: contain;
+        }
+        
+        .qr-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-md);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .qr-item:hover .qr-overlay {
+            opacity: 1;
+        }
+        
+        .qr-info-new {
+            text-align: center;
+            width: 100%;
+        }
+        
+        .qr-label {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+        
+        .qr-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+        
+        /* 页脚 */
+        .qr-scan-footer {
+            background: var(--bg-dark);
+            border-top: 1px solid var(--border-color);
+            padding: 24px 0;
+            margin-top: 48px;
+        }
+        
+        .qr-scan-footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 16px;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        
+        /* 提示信息 */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--bg-card);
+            color: var(--text-primary);
+            padding: 16px 24px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
+            border: 1px solid var(--border-color);
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            max-width: 400px;
+            width: 90%;
+        }
+        
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+        
+        /* 手机优化 */
+        @media (max-width: 768px) {
+            body {
+                padding: 12px;
+            }
+            
+            .modal-content {
+                padding: 30px 20px;
+            }
+            
+            .modal-title {
+                font-size: 1.7rem;
+            }
+            
+            .modal-btn {
+                padding: 16px 20px;
+                font-size: 1.1rem;
+            }
+            
+            .clock-modal-content {
+                padding: 25px 20px;
+            }
+            
+            .clock-modal-title {
+                font-size: 1.5rem;
+            }
+            
+            .clock-qr-placeholder {
+                width: 220px;
+                height: 220px;
+            }
+            
+            .facility-modal-content {
+                padding: 20px 15px;
+                max-width: 95%;
+            }
+            
+            .facility-buttons-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 14px;
+            }
+            
+            .facility-btn {
+                padding: 16px 12px;
+                font-size: 1rem;
+                min-height: 90px;
+            }
+            
+            .qr-display {
+                padding: 24px 12px;
+            }
+            
+            /* 移动端调整按钮位置 */
+            .back-to-facility-container {
+                position: relative;
+                top: auto;
+                left: auto;
+                margin-bottom: 15px;
+                width: 100%;
+            }
+            
+            .back-to-facility-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .qr-code-container {
+                padding: 20px 16px;
+                margin-top: 10px;
+            }
+            
+            .qr-placeholder {
+                max-width: 260px;
+                height: 260px;
+            }
+            
+            .qr-title {
+                font-size: 1.2rem;
+            }
+            
+            .qr-code {
+                font-size: 0.85rem;
+                padding: 10px;
+            }
+            
+            .qr-url {
+                font-size: 0.7rem;
+                padding: 10px;
+            }
+            
+            .action-btn {
+                padding: 12px 20px;
+                font-size: 0.95rem;
+            }
+            
+            /* 二维码扫描系统响应式 */
+            .qr-scan-header-content {
+                padding: 0 12px;
+            }
+            
+            .qr-scan-main-title {
+                font-size: 24px;
+            }
+            
+            .qr-scan-controls-section {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 12px;
+            }
+            
+            .control-btn {
+                justify-content: center;
+                width: 100%;
+            }
+            
+            .qr-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            
+            .category-header {
+                gap: 12px;
+            }
+            
+            .category-icon {
+                width: 36px;
+                height: 36px;
+                font-size: 18px;
+            }
+            
+            .category-title {
+                font-size: 16px;
+            }
+            
+            .collapse-btn {
+                padding: 16px 18px;
+            }
+            
+            .qr-scan-main-content {
+                padding: 0 12px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .modal-content {
+                padding: 25px 15px;
+            }
+            
+            .modal-title {
+                font-size: 1.5rem;
+            }
+            
+            .modal-subtitle {
+                font-size: 1rem;
+            }
+            
+            .modal-btn {
+                padding: 14px 16px;
+                font-size: 1rem;
+            }
+            
+            .clock-qr-placeholder {
+                width: 200px;
+                height: 200px;
+            }
+            
+            .facility-buttons-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .facility-btn .type-tag {
+                font-size: 0.75rem;
+                padding: 3px 8px;
+            }
+            
+            .qr-placeholder {
+                max-width: 240px;
+                height: 240px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .action-btn {
+                max-width: 100%;
+                width: 100%;
+            }
+            
+            /* 二维码扫描系统响应式 */
+            .qr-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .collapse-btn {
+                padding: 14px 16px;
+            }
+            
+            .subcategory {
+                padding: 16px;
+            }
+            
+            .qr-code-container-new {
+                width: 140px;
+                height: 140px;
+            }
+            
+            .qr-scan-controls-section {
+                flex-direction: column;
+            }
+            
+            .qr-scan-title-section {
+                padding: 20px 16px;
+            }
+            
+            .qr-scan-main-title {
+                font-size: 22px;
+            }
+        }
+        
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 3px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+        
+        /* 二维码容器优化，确保无遮挡 */
+        .qr-code-wrapper {
+            position: relative;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- 页面加载动画 -->
+    <div id="page-loading">
+        <div class="loading-logo">
+            <i class="fas fa-shield-alt"></i>
+        </div>
+        <div class="loading-text"><br>正在加载，请稍候...</div>
+        <div class="loading-spinner-container">
+            <div class="spinner-circle spinner-circle-outer"></div>
+            <div class="spinner-circle spinner-circle-inner"></div>
+        </div>
+        <div class="loading-progress">
+            <div class="loading-progress-bar" id="loading-progress-bar"></div>
+        </div>
+    </div>
+    
+    <!-- 欢迎弹窗 -->
+    <div class="welcome-modal" id="welcomeModal">
+        <div class="modal-content">
+            <div class="modal-icon">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <h1 class="modal-title">消防设施巡查系统</h1>
+            <p class="modal-subtitle">KingLong 消防设施巡查系统<br>♨️ 低调使用</p>
+            
+            <div class="modal-buttons">
+                <button class="modal-btn inspection" id="startInspectionBtn">
+                    <i class="fas fa-search"></i> 开始巡查任务
+                </button>
+                <button class="modal-btn clock" id="clockInOutBtn">
+                    <i class="fas fa-user-clock"></i> 上下班打卡
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 打卡弹窗 -->
+    <div class="clock-modal" id="clockModal">
+        <div class="clock-modal-content">
+            <div class="clock-modal-header">
+                <h2 class="clock-modal-title">
+                    <i class="fas fa-user-clock"></i> 上下班打卡
+                </h2>
+                <p class="clock-modal-subtitle">请扫描下方二维码进行上下班打卡</p>
+            </div>
+            
+            <div class="clock-qr-container">
+                <div class="clock-qr-placeholder" id="clockQrPlaceholder">
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        <p>正在生成打卡二维码...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="clock-info">
+                <div class="clock-code" id="clockCodeText">S0000007287810</div>
+                <div class="clock-url" id="clockUrlText">https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000007287810</div>
+            </div>
+            
+            <div class="clock-modal-buttons">
+                <button class="clock-close-btn" id="closeClockModalBtn">
+                    <i class="fas fa-times"></i> 关闭
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 车间选择弹窗 -->
+    <div class="facility-modal" id="facilityModal">
+        <div class="facility-modal-content">
+            <div class="facility-modal-header">
+                <h2 class="facility-modal-title">
+                    <i class="fas fa-building"></i> 车间与设施列表
+                </h2>
+                <p class="facility-modal-subtitle">点击任意车间或设施查看二维码</p>
+                <button class="facility-close-btn" id="facilityCloseBtn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="facility-buttons-container">
+                <div class="facility-buttons-grid" id="facilityButtonsGrid">
+                    <!-- 车间设施按钮将在这里动态生成 -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 主内容 - 二维码展示页面 -->
+    <div class="container" id="mainContainer">
+        <div class="content">
+            <div class="qr-display">
+                <!-- 返回选择按钮 - 独立位置 -->
+                <div class="back-to-facility-container">
+                    <button class="back-to-facility-btn" id="backToFacilityBtn">
+                        <i class="fas fa-arrow-left"></i> 返回选择
+                    </button>
+                </div>
+                
+                <h2><i class="fas fa-qrcode"></i> 闽政通消管家二维码</h2>
+                
+                <div class="qr-code-wrapper">
+                    <div class="qr-code-container" id="qrCodeContainer">
+                        <!-- 设施码模式提示 -->
+                        
+                        <div class="qr-placeholder">
+                            <div id="qr-image" class="loading">
+                                <div class="loading-spinner"></div>
+                                <p>加载中...</p>
+                            </div>
+                        </div>
+                        <div class="qr-info">
+                            <div class="qr-title" id="qr-title">请选择车间或设施</div>
+                            <div class="qr-code" id="qr-code-text">B0000000000000</div>
+                            <div class="qr-url-container">
+                                <div class="qr-url-label">访问链接：</div>
+                                <div class="qr-url" id="qr-url-text">https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000000000000</div>
+                            </div>
+                            
+                            <div class="action-buttons" id="action-buttons" style="display: none;">
+                                <button class="action-btn next" id="next-btn">
+                                    <i class="fas fa-arrow-right"></i> 下一个设施码
+                                </button>
+                            </div>
+                            
+                            <p class="instruction" id="instruction">使用手机扫描二维码查看详细信息</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>KingLong 设施码 &copy; 2026</p>
+        </footer>
+    </div>
+    
+    <!-- 车间二维码扫描系统页面 - 修改为使用index0.html的样式 -->
+    <div class="qr-scan-system" id="qrScanSystem">
+        <!-- 头部 -->
+        <header class="qr-scan-header">
+            <div class="qr-scan-header-content">
+                <div class="qr-scan-title-section">
+                    <h1 class="qr-scan-main-title">车间二维码扫描系统</h1>
+                    <p class="qr-scan-subtitle">点击分类展开查看二维码</p>
+                </div>
+                <div class="qr-scan-controls-section">
+                    <button class="control-btn collapse-all" id="collapseAllBtn">
+                        <i class="fas fa-compress-alt"></i>
+                        折叠所有分类
+                    </button>
+                    <button class="control-btn back" id="backFromScanBtn">
+                        <i class="fas fa-arrow-left"></i> 返回
+                    </button>
+                </div>
+            </div>
+        </header>
+        
+        <!-- 主内容 -->
+        <main class="qr-scan-main-content" id="categoryContainer">
+            <!-- 内容将通过JavaScript动态生成 -->
+        </main>
+        
+        <!-- 页脚 -->
+        <footer class="qr-scan-footer">
+            <div class="qr-scan-footer-content">
+                <p>KingLong 车间二维码扫描系统 &copy; 2026</p>
+            </div>
+        </footer>
+        <div class="toast" id="toast"></div>
+    </div>
+
+    <script>
+        // ==================== 新增：二维码缓存和生成函数 ====================
+        
+        // 二维码缓存对象
+        const qrCodeCache = {
+            // 建筑码缓存
+            building: {},
+            // 设施码缓存
+            facility: {}
+        };
+        
+        // 客户端生成QR码函数
+        function generateQRCodeClientSide(text, element) {
+            try {
+                // 使用qrcode-generator库生成QR码
+                const typeNumber = 0; // 自动类型
+                const errorCorrectionLevel = 'L'; // 纠错级别
+                const qr = qrcode(typeNumber, errorCorrectionLevel);
+                qr.addData(text);
+                qr.make();
+                
+                // 生成数据URL
+                const imgSrc = qr.createDataURL(10, 0); // 10px每个模块，无边框
+                const img = new Image();
+                img.src = imgSrc;
+                img.alt = "QR Code";
+                img.style.width = '100%';
+                img.style.height = '100%';
+                
+                // 清空元素并添加图片
+                element.innerHTML = '';
+                element.appendChild(img);
+                
+                return imgSrc; // 返回数据URL用于缓存
+            } catch (error) {
+                console.error('客户端QR码生成失败:', error);
+                // 降级到API方式
+                return generateQRCodeAPI(text, element);
+            }
+        }
+        
+        // API生成QR码函数（降级方案）
+        function generateQRCodeAPI(text, element) {
+            const qrSize = 250;
+            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${qrSize}x${qrSize}&data=${encodeURIComponent(text)}`;
+            
+            const img = new Image();
+            img.alt = "QR Code";
+            
+            img.onload = function() {
+                element.innerHTML = '';
+                element.appendChild(img);
+            };
+            
+            img.onerror = function() {
+                element.innerHTML = '<p>无法加载二维码</p>';
+            };
+            
+            img.src = qrUrl;
+            return qrUrl;
+        }
+        
+        // 智能生成QR码（优先客户端，失败则用API）
+        function generateQRCodeSmart(text, element, cacheKey, cacheType = 'building') {
+            // 检查缓存
+            if (qrCodeCache[cacheType][cacheKey]) {
+                const img = new Image();
+                img.src = qrCodeCache[cacheType][cacheKey];
+                img.alt = "QR Code";
+                img.style.width = '100%';
+                img.style.height = '100%';
+                
+                element.innerHTML = '';
+                element.appendChild(img);
+                return qrCodeCache[cacheType][cacheKey];
+            }
+            
+            // 尝试客户端生成
+            try {
+                const dataUrl = generateQRCodeClientSide(text, element);
+                qrCodeCache[cacheType][cacheKey] = dataUrl;
+                return dataUrl;
+            } catch (error) {
+                // 客户端生成失败，使用API
+                const apiUrl = generateQRCodeAPI(text, element);
+                qrCodeCache[cacheType][cacheKey] = apiUrl;
+                return apiUrl;
+            }
+        }
+        
+        // 预加载设施码
+        function preloadFacilityCodes(buildingName) {
+            if (!facilityCodes[buildingName] || facilityCodes[buildingName].length === 0) {
+                return;
+            }
+            
+            console.log(`预加载 ${buildingName} 的设施码...`);
+            
+            // 延迟执行以避免阻塞UI
+            setTimeout(() => {
+                facilityCodes[buildingName].forEach((facility, index) => {
+                    const cacheKey = `${buildingName}_${facility.code}`;
+                    
+                    // 如果尚未缓存，则预加载
+                    if (!qrCodeCache.facility[cacheKey]) {
+                        // 创建隐藏的canvas预生成（但不显示）
+                        const typeNumber = 0;
+                        const errorCorrectionLevel = 'L';
+                        const qr = qrcode(typeNumber, errorCorrectionLevel);
+                        qr.addData(facility.url);
+                        qr.make();
+                        
+                        // 生成数据URL并缓存
+                        const dataUrl = qr.createDataURL(10, 0);
+                        qrCodeCache.facility[cacheKey] = dataUrl;
+                        
+                        console.log(`预加载设施码 ${index + 1}/${facilityCodes[buildingName].length}: ${facility.name}`);
+                    }
+                });
+            }, 100);
+        }
+        
+        // ==================== 原有代码（优化版） ====================
+        
+        // 页面加载动画控制
+        const pageLoading = document.getElementById('page-loading');
+        const loadingProgressBar = document.getElementById('loading-progress-bar');
+        
+        // 模拟加载进度
+        function simulateLoadingProgress() {
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 10;
+                if (progress > 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                }
+                loadingProgressBar.style.width = progress + '%';
+            }, 150);
+            
+            return interval;
+        }
+        
+        // 页面加载完成处理
+        function handlePageLoaded() {
+            clearInterval(progressInterval);
+            loadingProgressBar.style.width = '100%';
+            
+            // 短暂延迟后隐藏加载动画，显示欢迎弹窗
+            setTimeout(() => {
+                pageLoading.classList.add('hidden');
+                // 确保欢迎弹窗显示
+                const welcomeModal = document.getElementById('welcomeModal');
+                welcomeModal.classList.remove('hidden');
+                console.log('页面加载完成，显示欢迎弹窗');
+            }, 500);
+        }
+        
+        // 开始模拟加载进度
+        const progressInterval = simulateLoadingProgress();
+        
+        // 获取弹窗相关DOM元素
+        const welcomeModal = document.getElementById('welcomeModal');
+        const clockModal = document.getElementById('clockModal');
+        const facilityModal = document.getElementById('facilityModal');
+        const mainContainer = document.getElementById('mainContainer');
+        const qrScanSystem = document.getElementById('qrScanSystem');
+        const startInspectionBtn = document.getElementById('startInspectionBtn');
+        const clockInOutBtn = document.getElementById('clockInOutBtn');
+        const closeClockModalBtn = document.getElementById('closeClockModalBtn');
+        const facilityCloseBtn = document.getElementById('facilityCloseBtn');
+        const facilityButtonsGrid = document.getElementById('facilityButtonsGrid');
+        const backToFacilityBtn = document.getElementById('backToFacilityBtn');
+        const clockQrPlaceholder = document.getElementById('clockQrPlaceholder');
+        const clockCodeText = document.getElementById('clockCodeText');
+        const clockUrlText = document.getElementById('clockUrlText');
+        
+        // 获取二维码展示页面DOM元素
+        const qrCodeContainer = document.getElementById('qrCodeContainer');
+        const qrTitle = document.getElementById('qr-title');
+        const qrCodeText = document.getElementById('qr-code-text');
+        const qrUrlText = document.getElementById('qr-url-text');
+        const qrImage = document.getElementById('qr-image');
+        const actionButtons = document.getElementById('action-buttons');
+        const nextBtn = document.getElementById('next-btn');
+        const instruction = document.getElementById('instruction');
+        
+        // 车间二维码扫描系统页面元素
+        const collapseAllBtn = document.getElementById('collapseAllBtn');
+        const backFromScanBtn = document.getElementById('backFromScanBtn');
+        const categoryContainer = document.getElementById('categoryContainer');
+        const toast = document.getElementById('toast');
+        
+        // 打卡QR码信息
+        const CLOCK_QR_CODE = "S0000007287810";
+        const CLOCK_QR_URL = "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000007287810";
+        
+        // 基础QR码URL
+        const BASE_QR_URL = "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=";
+        
+        // 车间与设施数据
+        const facilities = [
+            { name: "总装车间", code: "B0000006340822", type: "车间" },
+            { name: "焊装车间", code: "B0000006340824", type: "车间" },
+            { name: "电泳车间", code: "B0000006340826", type: "车间" },
+            { name: "涂装车间", code: "B0000006340830", type: "车间" },
+            { name: "特种涂装车间", code: "B0000006340835", type: "车间" },
+            { name: "试制车间", code: "B0000006340839", type: "车间" },
+            { name: "清洁楼", code: "B0000006340868", type: "设施" },
+            { name: "充电桩", code: "B0000006340870", type: "设施" },
+            { name: "联合动力站房", code: "B0000006343282", type: "设施" },
+            { name: "污水处理站", code: "B0000006343285", type: "设施" },
+            { name: "客户服务中心", code: "B0000006343279", type: "办公楼" },
+            { name: "A栋办公楼", code: "B0000006340896", type: "办公楼" },
+            { name: "B栋办公楼", code: "B0000006340900", type: "办公楼" },
+            { name: "E栋办公楼", code: "B0000006341172", type: "办公楼" }
+        ];
+        
+        // 设施码数据
+        const facilityCodes = {
+            "A栋办公楼": [
+                { name: "灭火器", code: "S0000009736239", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000009736239" },
+                { name: "疏散指示", code: "S0000009735960", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000009735960" },
+                { name: "疏散楼梯", code: "S0000009735961", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000009735961" },
+                { name: "应急照明", code: "S0000009735962", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000009735962" }
+            ],
+            "B栋办公楼": [
+                { name: "灭火器", code: "S0000009736238", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000009736238" },
+                { name: "疏散指示", code: "S0000009735968", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000009735968" },
+                { name: "疏散楼梯", code: "S0000009735965", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000009735965" },
+                { name: "应急照明", code: "S0000009735969", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000009735969" }
+            ],
+            "E栋办公楼": [
+                { name: "灭火器", code: "S0000009736236", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000009736236" },
+                { name: "疏散指示", code: "S0000009736139", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000009736139" },
+                { name: "疏散楼梯", code: "S0000009736137", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000009736137" },
+                { name: "应急照明", code: "S0000009736140", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000009736140" }
+            ],
+            "客户服务中心": [
+                { name: "灭火器", code: "S0000009736231", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000009736231" },
+                { name: "疏散指示", code: "S0000009736269", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000009736269" },
+                { name: "疏散楼梯", code: "S0000009736194", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000009736194" },
+                { name: "应急照明", code: "S0000009736157", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000009736157" }
+            ],
+            "总装车间": [
+                { name: "灭火器", code: "S0000009736223", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000009736223" },
+                { name: "安全出口", code: "S0000009735858", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000009735858" },
+                { name: "疏散指示", code: "S0000009735859", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000009735859" },
+                { name: "配电箱", code: "S0000009735915", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000009735915" }
+            ],
+            "电泳车间": [
+                { name: "灭火器", code: "S0000009736225", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000009736225" },
+                { name: "消火栓", code: "S0000009735921", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000009735921" },
+                { name: "疏散通道", code: "S0000009735920", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000009735920" },
+                { name: "应急照明", code: "S0000009735918", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000009735918" }
+            ],
+            "焊装车间": [
+                { name: "灭火器", code: "S0000009736224", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000009736224" },
+                { name: "安全出口", code: "S0000009736273", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000009736273" },
+                { name: "疏散通道", code: "S0000009735923", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000009735923" }
+            ],
+            "涂装车间": [
+                { name: "灭火器", code: "S0000009736226", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000009736226" },
+                { name: "安全出口", code: "S0000009735957", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000009735957" },
+                { name: "微型消防站", code: "S0000009735956", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000009735956" },
+                { name: "消防控制室", code: "S0000009735954", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000009735954" }
+            ],
+            "污水处理站": [
+                { name: "灭火器", code: "S0000009736227", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000009736227" },
+                { name: "疏散楼梯", code: "S0000009736159", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000009736159" }
+            ],
+            "试制车间": [
+                { name: "灭火器", code: "S0000009736230", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000009736230" },
+                { name: "安全出口", code: "S0000009735935", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000009735935" }
+            ],
+            "特种涂装车间": [
+                { name: "灭火器", code: "S0000009736228", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000009736228" },
+                { name: "疏散指示", code: "S0000009736119", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000009736119" }
+            ],
+            "充电桩": [
+                { name: "灭火器", code: "S0000009736152", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000009736152" },
+                { name: "消火栓", code: "S0000009736151", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000009736151" }
+            ],
+            "清洁楼": [
+                { name: "灭火器", code: "S0000009736240", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000009736240" },
+                { name: "配电箱", code: "S0000009735942", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000009735942" }
+            ],
+            "联合动力站房": [
+                { name: "灭火器", code: "S0000009736229", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000009736229" },
+                { name: "配电箱", code: "S0000009736168", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000009736168" }
+            ]
+        };
+        
+        // 车间二维码扫描系统数据
+        const qrScanData = [
+            {
+                category: "生产车间",
+                icon: "fas fa-industry",
+                items: [
+                    {
+                        subCategory: "总装车间",
+                        subCategoryIcon: "fas fa-cogs",
+                        items: [
+                            { name: "总装车间", code: "B0000006340822", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340822" },
+                            { name: "总装车间-地上1层", code: "B0000006340823", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340823" }
+                        ]
+                    },
+                    {
+                        subCategory: "焊装车间",
+                        subCategoryIcon: "fas fa-wrench",
+                        items: [
+                            { name: "焊装车间", code: "B0000006340824", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340824" },
+                            { name: "焊装车间-地上1层", code: "B0000006340825", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340825" }
+                        ]
+                    },
+                    {
+                        subCategory: "电泳车间",
+                        subCategoryIcon: "fas fa-tint",
+                        items: [
+                            { name: "电泳车间", code: "B0000006340826", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340826" },
+                            { name: "电泳车间-地上1层", code: "B0000006340827", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340827" },
+                            { name: "电泳车间-地上2层", code: "B0000006340828", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340828" },
+                            { name: "电泳车间-地上3层", code: "B0000006340829", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340829" }
+                        ]
+                    },
+                    {
+                        subCategory: "涂装车间",
+                        subCategoryIcon: "fas fa-paint-roller",
+                        items: [
+                            { name: "涂装车间", code: "B0000006340830", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340830" },
+                            { name: "涂装车间-地上1层", code: "B0000006340831", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340831" },
+                            { name: "涂装车间-地上2层", code: "B0000006340832", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340832" },
+                            { name: "涂装车间-地上3层", code: "B0000006340833", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340833" }
+                        ]
+                    },
+                    {
+                        subCategory: "特种涂装车间",
+                        subCategoryIcon: "fas fa-spray-can",
+                        items: [
+                            { name: "特种涂装车间", code: "B0000006340835", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340835" },
+                            { name: "特种涂装车间-地上1层", code: "B0000006340836", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340836" }
+                        ]
+                    },
+                    {
+                        subCategory: "试制车间",
+                        subCategoryIcon: "fas fa-flask",
+                        items: [
+                            { name: "试制车间", code: "B0000006340839", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340839" },
+                            { name: "试制车间-地上1层", code: "B0000006340840", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340840" }
+                        ]
+                    },
+                    {
+                        subCategory: "制件车间",
+                        subCategoryIcon: "fas fa-cut",
+                        items: [
+                            { name: "制件车间", code: "B0000006340841", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340841" },
+                            { name: "制件车间-地上1层", code: "B0000006340842", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340842" }
+                        ]
+                    }
+                ]
+            },
+            {
+                category: "办公楼",
+                icon: "fas fa-building",
+                items: [
+                    {
+                        subCategory: "A栋办公楼",
+                        subCategoryIcon: "fas fa-building",
+                        items: [
+                            { name: "A栋办公楼", code: "B0000006340896", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340896" },
+                            { name: "A栋办公楼-地上1层", code: "B0000006340897", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340897" },
+                            { name: "A栋办公楼-地上2层", code: "B0000006340898", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340898" },
+                            { name: "A栋办公楼-地上3层", code: "B0000006340899", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340899" }
+                        ]
+                    },
+                    {
+                        subCategory: "B栋办公楼",
+                        subCategoryIcon: "fas fa-building",
+                        items: [
+                            { name: "B栋办公楼", code: "B0000006340900", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340900" },
+                            { name: "B栋办公楼-地上1层", code: "B0000006340901", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340901" },
+                            { name: "B栋办公楼-地上2层", code: "B0000006340902", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340902" },
+                            { name: "B栋办公楼-地上3层", code: "B0000006340903", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340903" }
+                        ]
+                    },
+                    {
+                        subCategory: "C栋办公楼",
+                        subCategoryIcon: "fas fa-building",
+                        items: [
+                            { name: "C栋办公楼", code: "B0000006341007", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006341007" },
+                            { name: "C栋办公楼-地上1层", code: "B0000006341008", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006341008" },
+                            { name: "C栋办公楼-地上2层", code: "B0000006341009", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006341009" }
+                        ]
+                    },
+                    {
+                        subCategory: "E栋办公楼",
+                        subCategoryIcon: "fas fa-building",
+                        items: [
+                            { name: "E栋办公楼", code: "B0000006341172", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006341172" },
+                            { name: "E栋办公楼-地上1层", code: "B0000006341173", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006341173" },
+                            { name: "E栋办公楼-地上2层", code: "B0000006341174", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006341174" },
+                            { name: "E栋办公楼-地上3层", code: "B0000006341175", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006341175" },
+                            { name: "E栋办公楼-地上4层", code: "B0000006341176", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006341176" },
+                            { name: "E栋办公楼-地上5层", code: "B0000006341177", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006341177" },
+                            { name: "E栋办公楼-地上6层", code: "B0000006341178", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006341178" },
+                            { name: "E栋办公楼-地下1层", code: "B0000006341179", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006341179" }
+                        ]
+                    }
+                ]
+            },
+            {
+                category: "设施与站房",
+                icon: "fas fa-tools",
+                items: [
+                    {
+                        subCategory: "清洁楼",
+                        subCategoryIcon: "fas fa-broom",
+                        items: [
+                            { name: "清洁楼", code: "B0000006340868", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340868" },
+                            { name: "清洁楼-地上1层", code: "B0000006340869", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340869" }
+                        ]
+                    },
+                    {
+                        subCategory: "充电桩",
+                        subCategoryIcon: "fas fa-charging-station",
+                        items: [
+                            { name: "充电桩", code: "B0000006340870", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340870" },
+                            { name: "充电桩-地上1层", code: "B0000006340871", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006340871" }
+                        ]
+                    },
+                    {
+                        subCategory: "联合动力站房",
+                        subCategoryIcon: "fas fa-bolt",
+                        items: [
+                            { name: "联合动力站房", code: "B0000006343282", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006343282" },
+                            { name: "联合动力站房-地上1层", code: "B0000006343283", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006343283" }
+                        ]
+                    },
+                    {
+                        subCategory: "污水处理站",
+                        subCategoryIcon: "fas fa-water",
+                        items: [
+                            { name: "污水处理站", code: "B0000006343285", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006343285" },
+                            { name: "污水处理站-地上1层", code: "B0000006343286", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006343286" }
+                        ]
+                    }
+                ]
+            },
+            {
+                category: "服务中心",
+                icon: "fas fa-concierge-bell",
+                items: [
+                    {
+                        subCategory: "实验中心",
+                        subCategoryIcon: "fas fa-microscope",
+                        items: [
+                            { name: "实验中心", code: "B0000006341241", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006341241" },
+                            { name: "实验中心-地上1层", code: "B0000006341242", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006341242" },
+                            { name: "实验中心-地上2层", code: "B0000006341311", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006341311" },
+                            { name: "实验中心-地上3层", code: "B0000006341312", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006341312" }
+                        ]
+                    },
+                    {
+                        subCategory: "客户服务中心",
+                        subCategoryIcon: "fas fa-headset",
+                        items: [
+                            { name: "客户服务中心", code: "B0000006343279", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006343279" },
+                            { name: "客户服务中心-地上1层", code: "B0000006343280", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006343280" },
+                            { name: "客户服务中心-地上2层", code: "B0000006343281", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000006343281" }
+                        ]
+                    }
+                ]
+            }
+        ];
+        
+        // 当前状态变量
+        let selectedFacility = null;
+        let currentFacilityCodes = [];
+        let currentFacilityIndex = -1;
+        let isFacilityMode = false;
+        let currentBuildingName = '';
+        
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('页面DOM加载完成');
+            
+            // 延迟执行以确保所有资源加载
+            setTimeout(() => {
+                handlePageLoaded();
+                
+                // 初始化车间选择弹窗按钮
+                initializeFacilityButtons();
+                
+                // 初始化车间二维码扫描系统
+                initializeQRScanSystem();
+                
+                // 绑定事件监听器
+                bindEventListeners();
+            }, 300);
+        });
+        
+        // 初始化车间选择弹窗按钮
+        function initializeFacilityButtons() {
+            console.log('初始化车间按钮');
+            
+            // 先添加原有的车间按钮
+            facilities.forEach(facility => {
+                const button = document.createElement('button');
+                button.className = 'facility-btn';
+                button.dataset.code = facility.code;
+                button.dataset.name = facility.name;
+                button.dataset.type = facility.type;
+                
+                // 创建按钮内容
+                const nameSpan = document.createElement('span');
+                nameSpan.textContent = facility.name;
+                
+                const typeSpan = document.createElement('span');
+                typeSpan.className = 'type-tag';
+                typeSpan.textContent = facility.type;
+                
+                button.appendChild(nameSpan);
+                button.appendChild(typeSpan);
+                
+                // 点击直接进入二维码展示页面
+                button.addEventListener('click', function() {
+                    console.log('点击了车间按钮:', this.dataset.name);
+                    // 设置当前选择的设施
+                    selectedFacility = {
+                        name: this.dataset.name,
+                        code: this.dataset.code,
+                        type: this.dataset.type
+                    };
+                    
+                    // 关闭车间选择弹窗，显示主内容（二维码展示页面）
+                    facilityModal.classList.remove('active');
+                    mainContainer.classList.add('active');
+                    
+                    // 设置当前选择的设施
+                    currentBuildingName = selectedFacility.name;
+                    currentFacilityCodes = facilityCodes[currentBuildingName] || [];
+                    
+                    // 重置设施模式
+                    isFacilityMode = false;
+                    qrCodeContainer.classList.remove('facility-mode-active');
+                    actionButtons.style.display = 'none';
+                    instruction.textContent = '👉🏻 点击屏幕二维码切换到设施码';
+                    
+                    // 立即更新文本信息（无需等待二维码生成）
+                    qrTitle.textContent = selectedFacility.name;
+                    qrCodeText.textContent = selectedFacility.code;
+                    
+                    // 构建完整的URL
+                    const fullUrl = BASE_QR_URL + selectedFacility.code;
+                    qrUrlText.textContent = fullUrl;
+                    
+                    // 显示加载状态
+                    qrImage.innerHTML = '<div class="loading-spinner"></div><p>正在生成二维码...</p>';
+                    qrImage.className = 'loading';
+                    
+                    // 延迟生成二维码，不阻塞UI
+                    setTimeout(() => {
+                        // 使用智能生成（缓存+客户端生成）
+                        generateQRCodeSmart(
+                            fullUrl, 
+                            qrImage, 
+                            selectedFacility.code, 
+                            'building'
+                        );
+                        
+                        // 移除加载类
+                        qrImage.classList.remove('loading');
+                    }, 50);
+                    
+                    // 预加载该建筑的设施码
+                    preloadFacilityCodes(currentBuildingName);
+                });
+                
+                facilityButtonsGrid.appendChild(button);
+            });
+            
+            // 添加超纲设施码按钮（使用与其他按钮相同的样式）
+            const specialButton = document.createElement('button');
+            specialButton.className = 'facility-btn';
+            specialButton.id = 'superSteelFacilityBtn';
+            
+            // 创建按钮内容
+            const nameSpan = document.createElement('span');
+            nameSpan.textContent = '超纲设施码';
+            
+            const typeSpan = document.createElement('span');
+            typeSpan.className = 'type-tag';
+            typeSpan.textContent = '地上一层';
+            
+            specialButton.appendChild(nameSpan);
+            specialButton.appendChild(typeSpan);
+            
+            // 点击进入车间二维码扫描系统
+            specialButton.addEventListener('click', function() {
+                console.log('点击了超纲设施码按钮');
+                // 关闭车间选择弹窗，显示车间二维码扫描系统
+                facilityModal.classList.remove('active');
+                qrScanSystem.classList.add('active');
+            });
+            
+            facilityButtonsGrid.appendChild(specialButton);
+        }
+        
+        // 初始化车间二维码扫描系统 - 使用新的UI结构
+        function initializeQRScanSystem() {
+            console.log('初始化车间二维码扫描系统');
+            
+            // 清空容器
+            categoryContainer.innerHTML = '';
+            
+            // 遍历数据创建分类
+            qrScanData.forEach((categoryData, categoryIndex) => {
+                // 创建分类容器
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'category-collapse';
+                
+                // 计算该分类下的总项目数
+                let totalItems = 0;
+                categoryData.items.forEach(subCategory => {
+                    totalItems += subCategory.items.length;
+                });
+                
+                // 创建折叠按钮
+                const collapseBtn = document.createElement('button');
+                collapseBtn.className = 'collapse-btn collapsed';
+                collapseBtn.dataset.target = `category-${categoryIndex}`;
+                
+                // 创建分类头部
+                const categoryHeader = document.createElement('div');
+                categoryHeader.className = 'category-header';
+                
+                const categoryIcon = document.createElement('div');
+                categoryIcon.className = 'category-icon';
+                categoryIcon.innerHTML = `<i class="${categoryData.icon}"></i>`;
+                
+                const categoryTitleDiv = document.createElement('div');
+                const categoryTitle = document.createElement('h2');
+                categoryTitle.className = 'category-title';
+                categoryTitle.innerHTML = `${categoryData.category} <span class="category-count">${totalItems}个项目</span>`;
+                categoryTitleDiv.appendChild(categoryTitle);
+                
+                const collapseIndicator = document.createElement('i');
+                collapseIndicator.className = 'fas fa-chevron-down collapse-indicator';
+                
+                categoryHeader.appendChild(categoryIcon);
+                categoryHeader.appendChild(categoryTitleDiv);
+                
+                collapseBtn.appendChild(categoryHeader);
+                collapseBtn.appendChild(collapseIndicator);
+                
+                // 创建折叠内容区域
+                const collapseContent = document.createElement('div');
+                collapseContent.className = 'collapse-content';
+                collapseContent.id = `category-${categoryIndex}`;
+                
+                // 遍历子分类
+                categoryData.items.forEach((subCategoryData, subCategoryIndex) => {
+                    // 创建子分类
+                    const subcategoryDiv = document.createElement('div');
+                    subcategoryDiv.className = 'subcategory';
+                    
+                    // 创建子分类头部
+                    const subcategoryHeader = document.createElement('div');
+                    subcategoryHeader.className = 'subcategory-header';
+                    
+                    const subcategoryIcon = document.createElement('div');
+                    subcategoryIcon.className = 'subcategory-icon';
+                    subcategoryIcon.innerHTML = `<i class="${subCategoryData.subCategoryIcon}"></i>`;
+                    
+                    const subcategoryTitle = document.createElement('h3');
+                    subcategoryTitle.className = 'subcategory-title';
+                    subcategoryTitle.textContent = subCategoryData.subCategory;
+                    
+                    subcategoryHeader.appendChild(subcategoryIcon);
+                    subcategoryHeader.appendChild(subcategoryTitle);
+                    
+                    // 创建二维码网格
+                    const qrGrid = document.createElement('div');
+                    qrGrid.className = 'qr-grid';
+                    
+                    // 遍历项目
+                    subCategoryData.items.forEach((item, itemIndex) => {
+                        const qrItem = document.createElement('div');
+                        qrItem.className = 'qr-item';
+                        
+                        // 二维码容器
+                        const qrCodeContainerNew = document.createElement('div');
+                        qrCodeContainerNew.className = 'qr-code-container-new';
+                        
+                        // 二维码图片（使用客户端生成）
+                        const qrCodeImg = document.createElement('img');
+                        qrCodeImg.className = 'qr-code-img';
+                        qrCodeImg.alt = `${item.name}二维码`;
+                        
+                        // 立即生成QR码（客户端）
+                        setTimeout(() => {
+                            try {
+                                const typeNumber = 0;
+                                const errorCorrectionLevel = 'L';
+                                const qr = qrcode(typeNumber, errorCorrectionLevel);
+                                qr.addData(item.url);
+                                qr.make();
+                                const imgSrc = qr.createDataURL(8, 0);
+                                qrCodeImg.src = imgSrc;
+                            } catch (error) {
+                                // 降级到API
+                                qrCodeImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(item.url)}`;
+                            }
+                        }, 10);
+                        
+                        // 悬停覆盖层
+                        const qrOverlay = document.createElement('div');
+                        qrOverlay.className = 'qr-overlay';
+                        qrOverlay.innerHTML = '<i class="fas fa-expand-alt" style="font-size: 24px; color: white;"></i>';
+                        
+                        qrCodeContainerNew.appendChild(qrCodeImg);
+                        qrCodeContainerNew.appendChild(qrOverlay);
+                        
+                        // 二维码信息
+                        const qrInfoNew = document.createElement('div');
+                        qrInfoNew.className = 'qr-info-new';
+                        
+                        const qrLabel = document.createElement('div');
+                        qrLabel.className = 'qr-label';
+                        qrLabel.textContent = item.name;
+                        
+                        const qrDesc = document.createElement('div');
+                        qrDesc.className = 'qr-desc';
+                        qrDesc.textContent = '扫码访问详细信息';
+                        
+                        qrInfoNew.appendChild(qrLabel);
+                        qrInfoNew.appendChild(qrDesc);
+                        
+                        // 组装项目
+                        qrItem.appendChild(qrCodeContainerNew);
+                        qrItem.appendChild(qrInfoNew);
+                        
+                        // 添加点击事件 - 复制链接
+                        qrItem.addEventListener('click', function(e) {
+                            if (e.target.closest('.qr-code-container-new')) {
+                                copyToClipboard(item.url);
+                            }
+                        });
+                        
+                        // 添加到网格
+                        qrGrid.appendChild(qrItem);
+                    });
+                    
+                    // 组装子分类
+                    subcategoryDiv.appendChild(subcategoryHeader);
+                    subcategoryDiv.appendChild(qrGrid);
+                    
+                    // 添加到折叠内容
+                    collapseContent.appendChild(subcategoryDiv);
+                });
+                
+                // 添加折叠按钮点击事件
+                collapseBtn.addEventListener('click', function() {
+                    const targetContent = document.getElementById(this.dataset.target);
+                    const isCollapsed = this.classList.contains('collapsed');
+                    
+                    if (isCollapsed) {
+                        this.classList.remove('collapsed');
+                        targetContent.classList.add('expanded');
+                    } else {
+                        this.classList.add('collapsed');
+                        targetContent.classList.remove('expanded');
+                    }
+                    
+                    // 触觉反馈
+                    if ('vibrate' in navigator) {
+                        navigator.vibrate(20);
+                    }
+                });
+                
+                // 组装分类
+                categoryDiv.appendChild(collapseBtn);
+                categoryDiv.appendChild(collapseContent);
+                categoryContainer.appendChild(categoryDiv);
+            });
+        }
+        
+        // 绑定所有事件监听器
+        function bindEventListeners() {
+            console.log('绑定事件监听器');
+            
+            // "开始巡查任务"按钮点击事件
+            startInspectionBtn.addEventListener('click', function() {
+                console.log('点击了开始巡查任务按钮');
+                // 隐藏欢迎弹窗，显示车间选择弹窗
+                welcomeModal.classList.add('hidden');
+                facilityModal.classList.add('active');
+            });
+            
+            // "上下班打卡"按钮点击事件
+            clockInOutBtn.addEventListener('click', function() {
+                console.log('点击了上下班打卡按钮');
+                // 隐藏欢迎弹窗，显示打卡弹窗
+                welcomeModal.classList.add('hidden');
+                clockModal.classList.add('active');
+                
+                // 生成打卡二维码（使用客户端生成）
+                generateClockQRCode();
+            });
+            
+            // 关闭打卡弹窗按钮点击事件
+            closeClockModalBtn.addEventListener('click', function() {
+                console.log('点击了关闭打卡弹窗按钮');
+                // 关闭打卡弹窗，回到欢迎弹窗
+                clockModal.classList.remove('active');
+                welcomeModal.classList.remove('hidden');
+            });
+            
+            // 车间选择弹窗关闭按钮点击事件
+            facilityCloseBtn.addEventListener('click', function() {
+                console.log('点击了车间弹窗关闭按钮');
+                // 关闭车间选择弹窗，回到欢迎弹窗
+                facilityModal.classList.remove('active');
+                welcomeModal.classList.remove('hidden');
+            });
+            
+            // 二维码展示页面返回按钮点击事件
+            backToFacilityBtn.addEventListener('click', function() {
+                console.log('点击了返回选择按钮');
+                // 隐藏主内容，显示车间选择弹窗
+                mainContainer.classList.remove('active');
+                facilityModal.classList.add('active');
+            });
+            
+            // 二维码容器点击事件 - 进入设施码模式
+            qrCodeContainer.addEventListener('click', function() {
+                console.log('点击了二维码容器');
+                
+                if (!currentBuildingName) {
+                    alert('请先选择一个车间或设施');
+                    return;
+                }
+                
+                if (currentFacilityCodes.length === 0) {
+                    alert('当前选择的部位暂无设施码信息');
+                    return;
+                }
+                
+                showFacilityQRCode();
+                
+                // 滚动到顶部，确保二维码可见
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+            
+            // 下一个按钮点击事件
+            nextBtn.addEventListener('click', showNextFacilityCode);
+            
+            // 车间二维码扫描系统事件
+            collapseAllBtn.addEventListener('click', function() {
+                console.log('折叠所有分类');
+                const collapseButtons = document.querySelectorAll('.collapse-btn');
+                const collapseContents = document.querySelectorAll('.collapse-content');
+                
+                collapseButtons.forEach(button => {
+                    button.classList.add('collapsed');
+                });
+                
+                collapseContents.forEach(content => {
+                    content.classList.remove('expanded');
+                });
+            });
+            
+            backFromScanBtn.addEventListener('click', function() {
+                console.log('从扫描系统返回');
+                // 隐藏车间二维码扫描系统，显示车间选择弹窗
+                qrScanSystem.classList.remove('active');
+                facilityModal.classList.add('active');
+            });
+            
+            // 为二维码添加长按保存提示
+            let pressTimer;
+            document.addEventListener('touchstart', function(e) {
+                if (e.target.closest('.qr-code-container-new')) {
+                    pressTimer = setTimeout(() => {
+                        showToast('长按二维码可保存到相册');
+                    }, 800);
+                }
+            });
+            
+            document.addEventListener('touchend', function() {
+                clearTimeout(pressTimer);
+            });
+            
+            document.addEventListener('touchmove', function() {
+                clearTimeout(pressTimer);
+            });
+        }
+        
+        // 生成打卡二维码（优化版）
+        function generateClockQRCode() {
+            console.log('生成打卡二维码');
+            // 更新文本信息
+            clockCodeText.textContent = CLOCK_QR_CODE;
+            clockUrlText.textContent = CLOCK_QR_URL;
+            
+            // 使用客户端生成QR码
+            try {
+                const typeNumber = 0;
+                const errorCorrectionLevel = 'L';
+                const qr = qrcode(typeNumber, errorCorrectionLevel);
+                qr.addData(CLOCK_QR_URL);
+                qr.make();
+                
+                const imgSrc = qr.createDataURL(10, 0);
+                const img = new Image();
+                img.alt = "上下班打卡二维码";
+                img.src = imgSrc;
+                
+                img.onload = function() {
+                    clockQrPlaceholder.innerHTML = '';
+                    clockQrPlaceholder.appendChild(img);
+                    console.log('打卡二维码客户端生成成功');
+                };
+            } catch (error) {
+                console.log('客户端生成失败，使用API生成打卡二维码');
+                // 降级到API方式
+                const qrSize = 250;
+                const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${qrSize}x${qrSize}&data=${encodeURIComponent(CLOCK_QR_URL)}`;
+                
+                const img = new Image();
+                img.alt = "上下班打卡二维码";
+                
+                img.onload = function() {
+                    clockQrPlaceholder.innerHTML = '';
+                    clockQrPlaceholder.appendChild(img);
+                    console.log('打卡二维码API生成成功');
+                };
+                
+                img.onerror = function() {
+                    clockQrPlaceholder.innerHTML = '<p>无法加载二维码，请检查网络连接</p>';
+                    console.log('打卡二维码生成失败');
+                };
+                
+                img.src = qrUrl;
+            }
+        }
+        
+        // 显示设施码（优化版）
+        function showFacilityQRCode() {
+            console.log('显示设施码');
+            if (currentFacilityCodes.length === 0) {
+                alert('当前选择的部位暂无设施码信息');
+                return;
+            }
+            
+            // 如果是第一次进入设施模式，重置索引
+            if (!isFacilityMode) {
+                currentFacilityIndex = 0;
+                isFacilityMode = true;
+                qrCodeContainer.classList.add('facility-mode-active');
+                actionButtons.style.display = 'flex';
+            }
+            
+            // 获取当前设施码
+            const facilityCode = currentFacilityCodes[currentFacilityIndex];
+            
+            // 立即更新显示信息
+            instruction.textContent = `设施码 ${currentFacilityIndex + 1}/${currentFacilityCodes.length}`;
+            qrTitle.textContent = `${currentBuildingName} - ${facilityCode.name}`;
+            qrCodeText.textContent = facilityCode.code;
+            qrUrlText.textContent = facilityCode.url;
+            
+            // 显示加载状态
+            qrImage.innerHTML = '<div class="loading-spinner"></div><p>正在生成二维码...</p>';
+            qrImage.className = 'loading';
+            
+            // 延迟生成二维码
+            setTimeout(() => {
+                // 使用智能生成（缓存+客户端生成）
+                const cacheKey = `${currentBuildingName}_${facilityCode.code}`;
+                generateQRCodeSmart(
+                    facilityCode.url, 
+                    qrImage, 
+                    cacheKey, 
+                    'facility'
+                );
+                
+                // 移除加载类
+                qrImage.classList.remove('loading');
+            }, 50);
+        }
+        
+        // 显示下一个设施码（修改版）
+        function showNextFacilityCode() {
+            console.log('显示下一个设施码');
+            if (currentFacilityCodes.length === 0 || !isFacilityMode) {
+                return;
+            }
+            
+            // 如果当前是最后一个设施码
+            if (currentFacilityIndex === currentFacilityCodes.length - 1) {
+                console.log('已到达最后一个设施码，返回车间选择页面');
+                
+                // 显示提示
+                showToast('已查看完所有设施码，返回车间选择页面');
+                
+                // 短暂延迟后返回
+                setTimeout(() => {
+                    // 隐藏主内容，显示车间选择弹窗
+                    mainContainer.classList.remove('active');
+                    facilityModal.classList.add('active');
+                    
+                    // 重置设施模式
+                    resetFacilityMode();
+                }, 10);
+                
+                return;
+            }
+            
+            // 更新索引
+            currentFacilityIndex = currentFacilityIndex + 1;
+            
+            // 显示新的设施码
+            showFacilityQRCode();
+            
+            // 滚动到顶部，确保二维码可见
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // 重置设施模式
+        function resetFacilityMode() {
+            isFacilityMode = false;
+            currentFacilityIndex = -1;
+            qrCodeContainer.classList.remove('facility-mode-active');
+            actionButtons.style.display = 'none';
+            instruction.textContent = '👉🏻 点击屏幕二维码切换到设施码';
+            
+            // 重置显示为建筑码
+            if (selectedFacility) {
+                qrTitle.textContent = selectedFacility.name;
+                qrCodeText.textContent = selectedFacility.code;
+                const fullUrl = BASE_QR_URL + selectedFacility.code;
+                qrUrlText.textContent = fullUrl;
+                
+                // 显示建筑二维码
+                qrImage.innerHTML = '<div class="loading-spinner"></div><p>正在生成二维码...</p>';
+                qrImage.className = 'loading';
+                
+                setTimeout(() => {
+                    generateQRCodeSmart(
+                        fullUrl, 
+                        qrImage, 
+                        selectedFacility.code, 
+                        'building'
+                    );
+                    qrImage.classList.remove('loading');
+                }, 50);
+            }
+        }
+        
+        // 显示提示信息
+        function showToast(message) {
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+        
+        // 复制到剪贴板函数
+        function copyToClipboard(text) {
+            // 检查是否支持clipboard API
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(function() {
+                    showToast('链接已复制到剪贴板！');
+                    console.log('链接已复制:', text);
+                }).catch(function(err) {
+                    console.error('复制失败:', err);
+                    // 备用方法
+                    fallbackCopyText(text);
+                });
+            } else {
+                // 使用备用方法
+                fallbackCopyText(text);
+            }
+        }
+        
+        // 备用复制方法
+        function fallbackCopyText(text) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            
+            // 防止屏幕滚动
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showToast('链接已复制到剪贴板！');
+                    console.log('链接已复制:', text);
+                } else {
+                    console.error('备用复制方法失败');
+                    showToast('复制失败，请手动复制链接');
+                }
+            } catch (err) {
+                console.error('备用复制方法异常:', err);
+                showToast('复制失败，请手动复制链接');
+            }
+            
+            document.body.removeChild(textArea);
+        }
+    </script>
+</body>
+</html>
