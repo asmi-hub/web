@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🥷 弱水三千只取一瓢</title>
+    <title>🥷 弱水三千只取一瓢 - 消防巡查与视频监控系统</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- 引入QR码生成库 -->
     <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
@@ -176,7 +176,7 @@
             }
         }
 
-        /* ========== 原有样式 ========== */
+        /* ========== 基础样式 ========== */
         * {
             margin: 0;
             padding: 0;
@@ -196,7 +196,7 @@
             --shadow-color: rgba(0, 0, 0, 0.3);
             --success-color: #10b981;
             --warning-color: #f59e0b;
-            --collapse-color: #ef4444; /* 新增：折叠按钮颜色 */
+            --collapse-color: #ef4444;
             --secondary-color: #8b5cf6;
             --darker-bg: #020617;
             --text-muted: #64748b;
@@ -223,9 +223,9 @@
                 radial-gradient(circle at 80% 70%, rgba(79, 70, 229, 0.08) 0%, transparent 50%);
         }
         
-        /* 欢迎弹窗样式 */
+        /* ========== 欢迎弹窗样式 ========== */
         .welcome-modal {
-            display: flex; /* 改为flex，默认显示 */
+            display: flex;
             position: fixed;
             top: 0;
             left: 0;
@@ -239,7 +239,7 @@
         }
         
         .welcome-modal.hidden {
-            display: none; /* 使用hidden类来隐藏 */
+            display: none;
         }
         
         .modal-content {
@@ -328,11 +328,172 @@
             box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
         }
         
+        .modal-btn.stream {
+            background-color: #8b5cf6;
+            color: white;
+        }
+        
+        .modal-btn.stream:hover {
+            background-color: #7c3aed;
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4);
+        }
+        
         .modal-btn i {
             font-size: 1.3rem;
         }
         
-        /* 打卡弹窗样式 */
+        /* ========== 视频流弹窗样式 - 已更新为消防巡查系统背景 ========== */
+        .video-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-dark);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 10px;
+            backdrop-filter: blur(8px);
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(79, 70, 229, 0.08) 0%, transparent 50%);
+        }
+
+        .video-modal-content-wrapper {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            z-index: 2001;
+            width: 100%;
+            max-width: 900px;
+            padding: 20px;
+            background-color: rgba(30, 41, 59, 0.8);
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            border: 2px solid var(--primary-color);
+        }        .video-header {
+            text-align: center;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .video-header h2 {
+            font-size: 1.8rem;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .video-header p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .video-container-group {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .video-modal-item {
+            position: relative;
+            background-color: #000;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 
+                0 8px 30px rgba(0, 0, 0, 0.4),
+                0 4px 15px rgba(0, 0, 0, 0.3),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+            width: 100%;
+            max-width: 420px;
+            aspect-ratio: 16 / 9;
+        }
+
+        .video-error-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1003;
+            color: #fff;
+            font-size: 14px;
+            text-align: center;
+            padding: 20px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .video-error-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .video-error-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+            color: #ff6b6b;
+        }
+
+        .video-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+            z-index: 1002;
+            position: relative;
+            background-color: #000;
+        }
+
+            .video-tips-label {
+                color: var(--text-secondary);
+                font-size: 14px;
+                text-align: center;
+                margin: 10px 0 0 0;
+            }
+        .video-back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: var(--bg-card-light);
+            border: none;
+            border-radius: 10px;
+            color: var(--text-primary);
+            padding: 10px 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            z-index: 2002;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .video-back-btn:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 18px rgba(99, 102, 241, 0.4);
+        }
+
+        /* ========== 打卡弹窗样式 ========== */
         .clock-modal {
             display: none;
             position: fixed;
@@ -459,7 +620,7 @@
             transform: translateY(-3px);
         }
         
-        /* 车间选择弹窗 */
+        /* ========== 车间选择弹窗样式 ========== */
         .facility-modal {
             display: none;
             position: fixed;
@@ -601,7 +762,6 @@
             transform: scaleX(1);
         }
         
-        /* 移除超纲设施码的特殊样式 */
         .facility-btn .type-tag {
             font-size: 0.8rem;
             background: rgba(255, 255, 255, 0.15);
@@ -611,7 +771,7 @@
             font-weight: normal;
         }
         
-        /* 主内容 - 二维码展示页面 */
+        /* ========== 主内容 - 二维码展示页面样式 ========== */
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -655,17 +815,6 @@
             gap: 12px;
         }
         
-        .qr-display-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-        
-        /* 返回选择按钮 - 独立样式 */
         .back-to-facility-container {
             position: absolute;
             top: 24px;
@@ -702,7 +851,6 @@
             font-size: 1rem;
         }
         
-        /* 二维码容器 - 添加点击效果 */
         .qr-code-container {
             background-color: var(--bg-card-light);
             border-radius: 16px;
@@ -757,7 +905,6 @@
             object-fit: contain;
         }
         
-        /* 设施码模式提示 */
         .facility-mode-hint {
             position: absolute;
             top: -10px;
@@ -862,11 +1009,6 @@
             margin-bottom: 16px;
         }
         
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
         .action-buttons {
             display: flex;
             gap: 12px;
@@ -925,7 +1067,7 @@
             border-top: 1px solid var(--border-color);
         }
         
-        /* ============== 修改后的车间二维码扫描系统页面样式 ============== */
+        /* ========== 车间二维码扫描系统页面样式 ========== */
         .qr-scan-system {
             display: none;
             max-width: 1200px;
@@ -937,7 +1079,6 @@
             display: block;
         }
         
-        /* 移除黑色横幅头部样式 */
         .qr-scan-header {
             background: transparent;
             border-bottom: none;
@@ -983,7 +1124,6 @@
             opacity: 0.9;
         }
         
-        /* 控制按钮区域 */
         .qr-scan-controls-section {
             display: flex;
             justify-content: center;
@@ -996,7 +1136,6 @@
             border: 1px solid var(--border-color);
         }
         
-        /* 使用统一的控制按钮样式 */
         .control-btn {
             background: var(--bg-card-light);
             border: 1px solid var(--border-color);
@@ -1028,7 +1167,6 @@
             font-size: 16px;
         }
         
-        /* 修改：全部折叠按钮颜色 */
         .control-btn.collapse-all {
             background-color: var(--collapse-color);
             border-color: var(--collapse-color);
@@ -1051,7 +1189,6 @@
             color: white;
         }
         
-        /* 分类折叠区域 */
         .qr-scan-main-content {
             max-width: 1200px;
             margin: 0 auto;
@@ -1076,7 +1213,6 @@
             transform: translateY(-2px);
         }
         
-        /* 折叠按钮样式 */
         .collapse-btn {
             width: 100%;
             background: transparent;
@@ -1099,7 +1235,6 @@
             gap: 16px;
         }
         
-        /* 分类图标 */
         .category-icon {
             width: 40px;
             height: 40px;
@@ -1113,7 +1248,6 @@
             box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
         }
         
-        /* 分类标题 */
         .category-title {
             font-size: 18px;
             font-weight: 700;
@@ -1130,7 +1264,6 @@
             margin-left: 12px;
         }
         
-        /* 折叠指示器 */
         .collapse-indicator {
             color: var(--text-secondary);
             font-size: 20px;
@@ -1141,7 +1274,6 @@
             transform: rotate(-90deg);
         }
         
-        /* 折叠内容区域 */
         .collapse-content {
             max-height: 0;
             overflow: hidden;
@@ -1154,7 +1286,6 @@
             border-top: 1px solid var(--border-color);
         }
         
-        /* 子分类样式 */
         .subcategory {
             padding: 24px;
             border-bottom: 1px solid var(--border-color);
@@ -1191,7 +1322,6 @@
             color: var(--text-primary);
         }
         
-        /* 二维码网格 - 使用index0.html的展示效果 */
         .qr-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -1272,7 +1402,6 @@
             line-height: 1.4;
         }
         
-        /* 页脚 */
         .qr-scan-footer {
             background: var(--bg-dark);
             border-top: 1px solid var(--border-color);
@@ -1289,7 +1418,6 @@
             font-size: 14px;
         }
         
-        /* 提示信息 */
         .toast {
             position: fixed;
             bottom: 24px;
@@ -1313,7 +1441,7 @@
             opacity: 1;
         }
         
-        /* 手机优化 */
+        /* ========== 响应式设计 ========== */
         @media (max-width: 768px) {
             body {
                 padding: 12px;
@@ -1365,7 +1493,6 @@
                 padding: 24px 12px;
             }
             
-            /* 移动端调整按钮位置 */
             .back-to-facility-container {
                 position: relative;
                 top: auto;
@@ -1406,6 +1533,16 @@
             .action-btn {
                 padding: 12px 20px;
                 font-size: 0.95rem;
+            }
+            
+            /* 视频流弹窗响应式 */
+            .video-modal-content-wrapper {
+                max-width: 95%;
+                padding: 15px;
+            }
+            
+            .video-modal-item {
+                max-width: 100%;
             }
             
             /* 二维码扫描系统响应式 */
@@ -1502,6 +1639,16 @@
                 width: 100%;
             }
             
+            /* 视频流弹窗响应式 */
+            .video-modal-content-wrapper {
+                max-width: 100%;
+                padding: 10px;
+            }
+            
+            .video-header h2 {
+                font-size: 1.5rem;
+            }
+            
             /* 二维码扫描系统响应式 */
             .qr-grid {
                 grid-template-columns: 1fr;
@@ -1533,7 +1680,7 @@
             }
         }
         
-        /* 滚动条样式 */
+        /* ========== 滚动条样式 ========== */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -1553,7 +1700,6 @@
             background: var(--primary-dark);
         }
         
-        /* 二维码容器优化，确保无遮挡 */
         .qr-code-wrapper {
             position: relative;
             width: 100%;
@@ -1594,7 +1740,44 @@
                 <button class="modal-btn clock" id="clockInOutBtn">
                     <i class="fas fa-user-clock"></i> 上下班打卡
                 </button>
+                <button class="modal-btn stream" id="streamVideoBtn">
+                    <i class="fas fa-video"></i> 实时画面推流RTSP
+                </button>
             </div>
+        </div>
+    </div>
+    
+    <!-- 视频流弹窗 - 已更新为消防巡查系统背景 -->
+    <div class="video-modal-overlay" id="videoStreamModal">
+        <button class="video-back-btn" id="videoBackBtn">
+            <i class="fas fa-arrow-left"></i> 返回
+        </button>
+        <div class="video-modal-content-wrapper">
+            <div class="video-header">
+                <h2><i class="fas fa-video"></i> 实时监控画面</h2>
+                <p>KingLong 消防设施监控系统</p>
+            </div>
+            <div class="video-container-group">
+                <div class="video-modal-item">
+                    <div class="video-error-overlay" id="video-error-overlay-1">
+                        <div class="video-error-icon">⚠️</div>
+                        <div>视频1加载失败</div>
+                        <div style="font-size: 12px; margin-top: 4px; opacity: 0.8;">正在自动重试...</div>
+                    </div>
+                    <iframe class="video-iframe" id="video-iframe-1" src="http://rocks.osmi.cc:1084/stream.html?src=cam1" 
+                            allow="fullscreen *; autoplay *; encrypted-media *"></iframe>
+                </div>
+                <div class="video-modal-item">
+                    <div class="video-error-overlay" id="video-error-overlay-2">
+                        <div class="video-error-icon">⚠️</div>
+                        <div>视频2加载失败</div>
+                        <div style="font-size: 12px; margin-top: 4px; opacity: 0.8;">正在自动重试...</div>
+                    </div>
+                    <iframe class="video-iframe" id="video-iframe-2" src="http://rocks.osmi.cc:1084/stream.html?src=cam2" 
+                            allow="fullscreen *; autoplay *; encrypted-media *"></iframe>
+                </div>
+            </div>
+            <div class="video-tips-label">🚨大巴消控室 & 🏢E栋办公楼</div>
         </div>
     </div>
     
@@ -1655,7 +1838,7 @@
     <div class="container" id="mainContainer">
         <div class="content">
             <div class="qr-display">
-                <!-- 返回选择按钮 - 独立位置 -->
+                <!-- 返回选择按钮 -->
                 <div class="back-to-facility-container">
                     <button class="back-to-facility-btn" id="backToFacilityBtn">
                         <i class="fas fa-arrow-left"></i> 返回选择
@@ -1666,8 +1849,6 @@
                 
                 <div class="qr-code-wrapper">
                     <div class="qr-code-container" id="qrCodeContainer">
-                        <!-- 设施码模式提示 -->
-                        
                         <div class="qr-placeholder">
                             <div id="qr-image" class="loading">
                                 <div class="loading-spinner"></div>
@@ -1700,7 +1881,7 @@
         </footer>
     </div>
     
-    <!-- 车间二维码扫描系统页面 - 修改为使用index0.html的样式 -->
+    <!-- 车间二维码扫描系统页面 -->
     <div class="qr-scan-system" id="qrScanSystem">
         <!-- 头部 -->
         <header class="qr-scan-header">
@@ -1736,130 +1917,7 @@
     </div>
 
     <script>
-        // ==================== 新增：二维码缓存和生成函数 ====================
-        
-        // 二维码缓存对象
-        const qrCodeCache = {
-            // 建筑码缓存
-            building: {},
-            // 设施码缓存
-            facility: {}
-        };
-        
-        // 客户端生成QR码函数
-        function generateQRCodeClientSide(text, element) {
-            try {
-                // 使用qrcode-generator库生成QR码
-                const typeNumber = 0; // 自动类型
-                const errorCorrectionLevel = 'L'; // 纠错级别
-                const qr = qrcode(typeNumber, errorCorrectionLevel);
-                qr.addData(text);
-                qr.make();
-                
-                // 生成数据URL
-                const imgSrc = qr.createDataURL(10, 0); // 10px每个模块，无边框
-                const img = new Image();
-                img.src = imgSrc;
-                img.alt = "QR Code";
-                img.style.width = '100%';
-                img.style.height = '100%';
-                
-                // 清空元素并添加图片
-                element.innerHTML = '';
-                element.appendChild(img);
-                
-                return imgSrc; // 返回数据URL用于缓存
-            } catch (error) {
-                console.error('客户端QR码生成失败:', error);
-                // 降级到API方式
-                return generateQRCodeAPI(text, element);
-            }
-        }
-        
-        // API生成QR码函数（降级方案）
-        function generateQRCodeAPI(text, element) {
-            const qrSize = 250;
-            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${qrSize}x${qrSize}&data=${encodeURIComponent(text)}`;
-            
-            const img = new Image();
-            img.alt = "QR Code";
-            
-            img.onload = function() {
-                element.innerHTML = '';
-                element.appendChild(img);
-            };
-            
-            img.onerror = function() {
-                element.innerHTML = '<p>无法加载二维码</p>';
-            };
-            
-            img.src = qrUrl;
-            return qrUrl;
-        }
-        
-        // 智能生成QR码（优先客户端，失败则用API）
-        function generateQRCodeSmart(text, element, cacheKey, cacheType = 'building') {
-            // 检查缓存
-            if (qrCodeCache[cacheType][cacheKey]) {
-                const img = new Image();
-                img.src = qrCodeCache[cacheType][cacheKey];
-                img.alt = "QR Code";
-                img.style.width = '100%';
-                img.style.height = '100%';
-                
-                element.innerHTML = '';
-                element.appendChild(img);
-                return qrCodeCache[cacheType][cacheKey];
-            }
-            
-            // 尝试客户端生成
-            try {
-                const dataUrl = generateQRCodeClientSide(text, element);
-                qrCodeCache[cacheType][cacheKey] = dataUrl;
-                return dataUrl;
-            } catch (error) {
-                // 客户端生成失败，使用API
-                const apiUrl = generateQRCodeAPI(text, element);
-                qrCodeCache[cacheType][cacheKey] = apiUrl;
-                return apiUrl;
-            }
-        }
-        
-        // 预加载设施码
-        function preloadFacilityCodes(buildingName) {
-            if (!facilityCodes[buildingName] || facilityCodes[buildingName].length === 0) {
-                return;
-            }
-            
-            console.log(`预加载 ${buildingName} 的设施码...`);
-            
-            // 延迟执行以避免阻塞UI
-            setTimeout(() => {
-                facilityCodes[buildingName].forEach((facility, index) => {
-                    const cacheKey = `${buildingName}_${facility.code}`;
-                    
-                    // 如果尚未缓存，则预加载
-                    if (!qrCodeCache.facility[cacheKey]) {
-                        // 创建隐藏的canvas预生成（但不显示）
-                        const typeNumber = 0;
-                        const errorCorrectionLevel = 'L';
-                        const qr = qrcode(typeNumber, errorCorrectionLevel);
-                        qr.addData(facility.url);
-                        qr.make();
-                        
-                        // 生成数据URL并缓存
-                        const dataUrl = qr.createDataURL(10, 0);
-                        qrCodeCache.facility[cacheKey] = dataUrl;
-                        
-                        console.log(`预加载设施码 ${index + 1}/${facilityCodes[buildingName].length}: ${facility.name}`);
-                    }
-                });
-            }, 100);
-        }
-        
-        // ==================== 原有代码（优化版） ====================
-        
-        // 页面加载动画控制
+        // ==================== 页面初始化 ====================
         const pageLoading = document.getElementById('page-loading');
         const loadingProgressBar = document.getElementById('loading-progress-bar');
         
@@ -1883,36 +1941,40 @@
             clearInterval(progressInterval);
             loadingProgressBar.style.width = '100%';
             
-            // 短暂延迟后隐藏加载动画，显示欢迎弹窗
             setTimeout(() => {
                 pageLoading.classList.add('hidden');
-                // 确保欢迎弹窗显示
                 const welcomeModal = document.getElementById('welcomeModal');
                 welcomeModal.classList.remove('hidden');
                 console.log('页面加载完成，显示欢迎弹窗');
             }, 500);
         }
         
-        // 开始模拟加载进度
         const progressInterval = simulateLoadingProgress();
         
-        // 获取弹窗相关DOM元素
+        // ==================== DOM元素获取 ====================
         const welcomeModal = document.getElementById('welcomeModal');
         const clockModal = document.getElementById('clockModal');
         const facilityModal = document.getElementById('facilityModal');
+        const videoStreamModal = document.getElementById('videoStreamModal');
         const mainContainer = document.getElementById('mainContainer');
         const qrScanSystem = document.getElementById('qrScanSystem');
+        
+        // 按钮元素
         const startInspectionBtn = document.getElementById('startInspectionBtn');
         const clockInOutBtn = document.getElementById('clockInOutBtn');
+        const streamVideoBtn = document.getElementById('streamVideoBtn');
         const closeClockModalBtn = document.getElementById('closeClockModalBtn');
         const facilityCloseBtn = document.getElementById('facilityCloseBtn');
         const facilityButtonsGrid = document.getElementById('facilityButtonsGrid');
         const backToFacilityBtn = document.getElementById('backToFacilityBtn');
+        const videoBackBtn = document.getElementById('videoBackBtn');
+        
+        // 打卡页面元素
         const clockQrPlaceholder = document.getElementById('clockQrPlaceholder');
         const clockCodeText = document.getElementById('clockCodeText');
         const clockUrlText = document.getElementById('clockUrlText');
         
-        // 获取二维码展示页面DOM元素
+        // 二维码展示页面元素
         const qrCodeContainer = document.getElementById('qrCodeContainer');
         const qrTitle = document.getElementById('qr-title');
         const qrCodeText = document.getElementById('qr-code-text');
@@ -1922,20 +1984,251 @@
         const nextBtn = document.getElementById('next-btn');
         const instruction = document.getElementById('instruction');
         
-        // 车间二维码扫描系统页面元素
+        // 车间二维码扫描系统元素
         const collapseAllBtn = document.getElementById('collapseAllBtn');
         const backFromScanBtn = document.getElementById('backFromScanBtn');
         const categoryContainer = document.getElementById('categoryContainer');
         const toast = document.getElementById('toast');
         
-        // 打卡QR码信息
+        // 视频流弹窗元素
+        const videoIframe1 = document.getElementById('video-iframe-1');
+        const videoIframe2 = document.getElementById('video-iframe-2');
+        const videoErrorOverlay1 = document.getElementById('video-error-overlay-1');
+        const videoErrorOverlay2 = document.getElementById('video-error-overlay-2');
+        
+        // ==================== 视频流功能配置 ====================
+        const VIDEO_CHECK_INTERVAL = 5000;
+        const VIDEO_RECONNECT_DELAY = 2000;
+        const MAX_VIDEO_RETRY_COUNT = 5;
+        let videoCheckTimer = null;
+        const videoRetryCounts = {
+            'video-iframe-1': 0,
+            'video-iframe-2': 0
+        };
+        
+        // ==================== 视频流功能函数 ====================
+        function toggleVideoErrorOverlay(iframeId, show) {
+            const overlay = document.getElementById(`video-error-overlay-${iframeId.split('-')[3]}`);
+            if (overlay) {
+                overlay.classList.toggle('show', show);
+            }
+        }
+        
+        function refreshVideoStream(iframe) {
+            if (!iframe || iframe.src === '') return;
+            
+            videoRetryCounts[iframe.id]++;
+            toggleVideoErrorOverlay(iframe.id, true);
+        
+            if (videoRetryCounts[iframe.id] >= MAX_VIDEO_RETRY_COUNT) {
+                const overlay = document.getElementById(`video-error-overlay-${iframe.id.split('-')[3]}`);
+                if (overlay) {
+                    overlay.innerHTML = `
+                        <div class="video-error-icon">❌</div>
+                        <div>视频${iframe.id.split('-')[3]}加载失败</div>
+                        <div style="font-size: 12px; margin-top: 4px; opacity: 0.8;">已重试${MAX_VIDEO_RETRY_COUNT}次，请检查网络或地址</div>
+                    `;
+                    return;
+                }
+            }
+        
+            const src = iframe.src;
+            iframe.src = 'about:blank';
+            setTimeout(() => {
+                iframe.src = src;
+                console.log(`视频${iframe.id}已尝试重连（第${videoRetryCounts[iframe.id]}次）`);
+            }, VIDEO_RECONNECT_DELAY);
+        }
+        
+        function resetVideoStreamStatus(iframe) {
+            videoRetryCounts[iframe.id] = 0;
+            toggleVideoErrorOverlay(iframe.id, false);
+            iframe.lastUpdateTime = Date.now();
+        }
+        
+        function checkVideoStreamStatus() {
+            [videoIframe1, videoIframe2].forEach(iframe => {
+                try {
+                    if (iframe.contentWindow?.location.href === 'about:blank') {
+                        refreshVideoStream(iframe);
+                        return;
+                    }
+        
+                    if (iframe.contentDocument?.readyState !== 'complete' || iframe.src === 'about:blank') {
+                        refreshVideoStream(iframe);
+                        return;
+                    }
+        
+                    const now = Date.now();
+                    if (!iframe.lastUpdateTime) {
+                        iframe.lastUpdateTime = now;
+                    } else if (now - iframe.lastUpdateTime > VIDEO_CHECK_INTERVAL * 3) {
+                        refreshVideoStream(iframe);
+                    } else {
+                        resetVideoStreamStatus(iframe);
+                    }
+                } catch (e) {
+                    if (e.name !== 'SecurityError') {
+                        refreshVideoStream(iframe);
+                    } else {
+                        iframe.lastUpdateTime = Date.now();
+                        toggleVideoErrorOverlay(iframe.id, false);
+                    }
+                }
+            });
+        }
+        
+        function startVideoStreamCheck() {
+            if (videoCheckTimer) clearInterval(videoCheckTimer);
+            checkVideoStreamStatus();
+            videoCheckTimer = setInterval(checkVideoStreamStatus, VIDEO_CHECK_INTERVAL);
+            console.log('视频自动检查已启动');
+        }
+        
+        function stopVideoStreamCheck() {
+            if (videoCheckTimer) {
+                clearInterval(videoCheckTimer);
+                videoCheckTimer = null;
+                console.log('视频自动检查已停止');
+            }
+        }
+        
+        function closeVideoStreamModal() {
+            videoStreamModal.style.display = 'none';
+            stopVideoStreamCheck();
+            
+            // 重置所有视频状态
+            Object.keys(videoRetryCounts).forEach(key => {
+                videoRetryCounts[key] = 0;
+                toggleVideoErrorOverlay(key, false);
+            });
+            
+            welcomeModal.classList.remove('hidden');
+        }
+        
+        function openVideoStreamModal() {
+            videoStreamModal.style.display = 'flex';
+            welcomeModal.classList.add('hidden');
+            
+            // 重置iframe
+            videoIframe1.src = 'about:blank';
+            videoIframe2.src = 'about:blank';
+            
+            setTimeout(() => {
+                videoIframe1.src = 'http://rocks.osmi.cc:1084/stream.html?src=cam1';
+                videoIframe2.src = 'http://rocks.osmi.cc:1084/stream.html?src=cam2';
+            }, 300);
+            
+            startVideoStreamCheck();
+        }
+        
+        // ==================== 二维码缓存和生成函数 ====================
+        const qrCodeCache = {
+            building: {},
+            facility: {}
+        };
+        
+        function generateQRCodeClientSide(text, element) {
+            try {
+                const typeNumber = 0;
+                const errorCorrectionLevel = 'L';
+                const qr = qrcode(typeNumber, errorCorrectionLevel);
+                qr.addData(text);
+                qr.make();
+                
+                const imgSrc = qr.createDataURL(10, 0);
+                const img = new Image();
+                img.src = imgSrc;
+                img.alt = "QR Code";
+                img.style.width = '100%';
+                img.style.height = '100%';
+                
+                element.innerHTML = '';
+                element.appendChild(img);
+                
+                return imgSrc;
+            } catch (error) {
+                console.error('客户端QR码生成失败:', error);
+                return generateQRCodeAPI(text, element);
+            }
+        }
+        
+        function generateQRCodeAPI(text, element) {
+            const qrSize = 250;
+            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${qrSize}x${qrSize}&data=${encodeURIComponent(text)}`;
+            
+            const img = new Image();
+            img.alt = "QR Code";
+            
+            img.onload = function() {
+                element.innerHTML = '';
+                element.appendChild(img);
+            };
+            
+            img.onerror = function() {
+                element.innerHTML = '<p>无法加载二维码</p>';
+            };
+            
+            img.src = qrUrl;
+            return qrUrl;
+        }
+        
+        function generateQRCodeSmart(text, element, cacheKey, cacheType = 'building') {
+            if (qrCodeCache[cacheType][cacheKey]) {
+                const img = new Image();
+                img.src = qrCodeCache[cacheType][cacheKey];
+                img.alt = "QR Code";
+                img.style.width = '100%';
+                img.style.height = '100%';
+                
+                element.innerHTML = '';
+                element.appendChild(img);
+                return qrCodeCache[cacheType][cacheKey];
+            }
+            
+            try {
+                const dataUrl = generateQRCodeClientSide(text, element);
+                qrCodeCache[cacheType][cacheKey] = dataUrl;
+                return dataUrl;
+            } catch (error) {
+                const apiUrl = generateQRCodeAPI(text, element);
+                qrCodeCache[cacheType][cacheKey] = apiUrl;
+                return apiUrl;
+            }
+        }
+        
+        function preloadFacilityCodes(buildingName) {
+            if (!facilityCodes[buildingName] || facilityCodes[buildingName].length === 0) {
+                return;
+            }
+            
+            console.log(`预加载 ${buildingName} 的设施码...`);
+            
+            setTimeout(() => {
+                facilityCodes[buildingName].forEach((facility, index) => {
+                    const cacheKey = `${buildingName}_${facility.code}`;
+                    
+                    if (!qrCodeCache.facility[cacheKey]) {
+                        const typeNumber = 0;
+                        const errorCorrectionLevel = 'L';
+                        const qr = qrcode(typeNumber, errorCorrectionLevel);
+                        qr.addData(facility.url);
+                        qr.make();
+                        
+                        const dataUrl = qr.createDataURL(10, 0);
+                        qrCodeCache.facility[cacheKey] = dataUrl;
+                        
+                        console.log(`预加载设施码 ${index + 1}/${facilityCodes[buildingName].length}: ${facility.name}`);
+                    }
+                });
+            }, 100);
+        }
+        
+        // ==================== 数据配置 ====================
         const CLOCK_QR_CODE = "S0000007287810";
         const CLOCK_QR_URL = "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000007287810";
-        
-        // 基础QR码URL
         const BASE_QR_URL = "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=";
         
-        // 车间与设施数据
         const facilities = [
             { name: "总装车间", code: "B0000006340822", type: "车间" },
             { name: "焊装车间", code: "B0000006340824", type: "车间" },
@@ -1953,7 +2246,6 @@
             { name: "E栋办公楼", code: "B0000006341172", type: "办公楼" }
         ];
         
-        // 设施码数据
         const facilityCodes = {
             "A栋办公楼": [
                 { name: "灭火器", code: "S0000009736239", url: "https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=S0000009736239" },
@@ -2028,7 +2320,6 @@
             ]
         };
         
-        // 车间二维码扫描系统数据
         const qrScanData = [
             {
                 category: "生产车间",
@@ -2210,37 +2501,28 @@
             }
         ];
         
-        // 当前状态变量
+        // ==================== 状态变量 ====================
         let selectedFacility = null;
         let currentFacilityCodes = [];
         let currentFacilityIndex = -1;
         let isFacilityMode = false;
         let currentBuildingName = '';
         
-        // 页面加载时初始化
+        // ==================== 初始化函数 ====================
         document.addEventListener('DOMContentLoaded', function() {
             console.log('页面DOM加载完成');
             
-            // 延迟执行以确保所有资源加载
             setTimeout(() => {
                 handlePageLoaded();
-                
-                // 初始化车间选择弹窗按钮
                 initializeFacilityButtons();
-                
-                // 初始化车间二维码扫描系统
                 initializeQRScanSystem();
-                
-                // 绑定事件监听器
                 bindEventListeners();
             }, 300);
         });
         
-        // 初始化车间选择弹窗按钮
         function initializeFacilityButtons() {
             console.log('初始化车间按钮');
             
-            // 先添加原有的车间按钮
             facilities.forEach(facility => {
                 const button = document.createElement('button');
                 button.className = 'facility-btn';
@@ -2248,7 +2530,6 @@
                 button.dataset.name = facility.name;
                 button.dataset.type = facility.type;
                 
-                // 创建按钮内容
                 const nameSpan = document.createElement('span');
                 nameSpan.textContent = facility.name;
                 
@@ -2259,69 +2540,54 @@
                 button.appendChild(nameSpan);
                 button.appendChild(typeSpan);
                 
-                // 点击直接进入二维码展示页面
                 button.addEventListener('click', function() {
                     console.log('点击了车间按钮:', this.dataset.name);
-                    // 设置当前选择的设施
                     selectedFacility = {
                         name: this.dataset.name,
                         code: this.dataset.code,
                         type: this.dataset.type
                     };
                     
-                    // 关闭车间选择弹窗，显示主内容（二维码展示页面）
                     facilityModal.classList.remove('active');
                     mainContainer.classList.add('active');
                     
-                    // 设置当前选择的设施
                     currentBuildingName = selectedFacility.name;
                     currentFacilityCodes = facilityCodes[currentBuildingName] || [];
                     
-                    // 重置设施模式
                     isFacilityMode = false;
                     qrCodeContainer.classList.remove('facility-mode-active');
                     actionButtons.style.display = 'none';
                     instruction.textContent = '👉🏻 点击屏幕二维码切换到设施码';
                     
-                    // 立即更新文本信息（无需等待二维码生成）
                     qrTitle.textContent = selectedFacility.name;
                     qrCodeText.textContent = selectedFacility.code;
                     
-                    // 构建完整的URL
                     const fullUrl = BASE_QR_URL + selectedFacility.code;
                     qrUrlText.textContent = fullUrl;
                     
-                    // 显示加载状态
                     qrImage.innerHTML = '<div class="loading-spinner"></div><p>正在生成二维码...</p>';
                     qrImage.className = 'loading';
                     
-                    // 延迟生成二维码，不阻塞UI
                     setTimeout(() => {
-                        // 使用智能生成（缓存+客户端生成）
                         generateQRCodeSmart(
                             fullUrl, 
                             qrImage, 
                             selectedFacility.code, 
                             'building'
                         );
-                        
-                        // 移除加载类
                         qrImage.classList.remove('loading');
                     }, 50);
                     
-                    // 预加载该建筑的设施码
                     preloadFacilityCodes(currentBuildingName);
                 });
                 
                 facilityButtonsGrid.appendChild(button);
             });
             
-            // 添加超纲设施码按钮（使用与其他按钮相同的样式）
             const specialButton = document.createElement('button');
             specialButton.className = 'facility-btn';
             specialButton.id = 'superSteelFacilityBtn';
             
-            // 创建按钮内容
             const nameSpan = document.createElement('span');
             nameSpan.textContent = '超纲设施码';
             
@@ -2332,10 +2598,8 @@
             specialButton.appendChild(nameSpan);
             specialButton.appendChild(typeSpan);
             
-            // 点击进入车间二维码扫描系统
             specialButton.addEventListener('click', function() {
                 console.log('点击了超纲设施码按钮');
-                // 关闭车间选择弹窗，显示车间二维码扫描系统
                 facilityModal.classList.remove('active');
                 qrScanSystem.classList.add('active');
             });
@@ -2343,31 +2607,24 @@
             facilityButtonsGrid.appendChild(specialButton);
         }
         
-        // 初始化车间二维码扫描系统 - 使用新的UI结构
         function initializeQRScanSystem() {
             console.log('初始化车间二维码扫描系统');
             
-            // 清空容器
             categoryContainer.innerHTML = '';
             
-            // 遍历数据创建分类
             qrScanData.forEach((categoryData, categoryIndex) => {
-                // 创建分类容器
                 const categoryDiv = document.createElement('div');
                 categoryDiv.className = 'category-collapse';
                 
-                // 计算该分类下的总项目数
                 let totalItems = 0;
                 categoryData.items.forEach(subCategory => {
                     totalItems += subCategory.items.length;
                 });
                 
-                // 创建折叠按钮
                 const collapseBtn = document.createElement('button');
                 collapseBtn.className = 'collapse-btn collapsed';
                 collapseBtn.dataset.target = `category-${categoryIndex}`;
                 
-                // 创建分类头部
                 const categoryHeader = document.createElement('div');
                 categoryHeader.className = 'category-header';
                 
@@ -2390,18 +2647,14 @@
                 collapseBtn.appendChild(categoryHeader);
                 collapseBtn.appendChild(collapseIndicator);
                 
-                // 创建折叠内容区域
                 const collapseContent = document.createElement('div');
                 collapseContent.className = 'collapse-content';
                 collapseContent.id = `category-${categoryIndex}`;
                 
-                // 遍历子分类
                 categoryData.items.forEach((subCategoryData, subCategoryIndex) => {
-                    // 创建子分类
                     const subcategoryDiv = document.createElement('div');
                     subcategoryDiv.className = 'subcategory';
                     
-                    // 创建子分类头部
                     const subcategoryHeader = document.createElement('div');
                     subcategoryHeader.className = 'subcategory-header';
                     
@@ -2416,25 +2669,20 @@
                     subcategoryHeader.appendChild(subcategoryIcon);
                     subcategoryHeader.appendChild(subcategoryTitle);
                     
-                    // 创建二维码网格
                     const qrGrid = document.createElement('div');
                     qrGrid.className = 'qr-grid';
                     
-                    // 遍历项目
                     subCategoryData.items.forEach((item, itemIndex) => {
                         const qrItem = document.createElement('div');
                         qrItem.className = 'qr-item';
                         
-                        // 二维码容器
                         const qrCodeContainerNew = document.createElement('div');
                         qrCodeContainerNew.className = 'qr-code-container-new';
                         
-                        // 二维码图片（使用客户端生成）
                         const qrCodeImg = document.createElement('img');
                         qrCodeImg.className = 'qr-code-img';
                         qrCodeImg.alt = `${item.name}二维码`;
                         
-                        // 立即生成QR码（客户端）
                         setTimeout(() => {
                             try {
                                 const typeNumber = 0;
@@ -2445,12 +2693,10 @@
                                 const imgSrc = qr.createDataURL(8, 0);
                                 qrCodeImg.src = imgSrc;
                             } catch (error) {
-                                // 降级到API
                                 qrCodeImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(item.url)}`;
                             }
                         }, 10);
                         
-                        // 悬停覆盖层
                         const qrOverlay = document.createElement('div');
                         qrOverlay.className = 'qr-overlay';
                         qrOverlay.innerHTML = '<i class="fas fa-expand-alt" style="font-size: 24px; color: white;"></i>';
@@ -2458,7 +2704,6 @@
                         qrCodeContainerNew.appendChild(qrCodeImg);
                         qrCodeContainerNew.appendChild(qrOverlay);
                         
-                        // 二维码信息
                         const qrInfoNew = document.createElement('div');
                         qrInfoNew.className = 'qr-info-new';
                         
@@ -2473,30 +2718,24 @@
                         qrInfoNew.appendChild(qrLabel);
                         qrInfoNew.appendChild(qrDesc);
                         
-                        // 组装项目
                         qrItem.appendChild(qrCodeContainerNew);
                         qrItem.appendChild(qrInfoNew);
                         
-                        // 添加点击事件 - 复制链接
                         qrItem.addEventListener('click', function(e) {
                             if (e.target.closest('.qr-code-container-new')) {
                                 copyToClipboard(item.url);
                             }
                         });
                         
-                        // 添加到网格
                         qrGrid.appendChild(qrItem);
                     });
                     
-                    // 组装子分类
                     subcategoryDiv.appendChild(subcategoryHeader);
                     subcategoryDiv.appendChild(qrGrid);
                     
-                    // 添加到折叠内容
                     collapseContent.appendChild(subcategoryDiv);
                 });
                 
-                // 添加折叠按钮点击事件
                 collapseBtn.addEventListener('click', function() {
                     const targetContent = document.getElementById(this.dataset.target);
                     const isCollapsed = this.classList.contains('collapsed');
@@ -2509,67 +2748,68 @@
                         targetContent.classList.remove('expanded');
                     }
                     
-                    // 触觉反馈
                     if ('vibrate' in navigator) {
                         navigator.vibrate(20);
                     }
                 });
                 
-                // 组装分类
                 categoryDiv.appendChild(collapseBtn);
                 categoryDiv.appendChild(collapseContent);
                 categoryContainer.appendChild(categoryDiv);
             });
         }
         
-        // 绑定所有事件监听器
         function bindEventListeners() {
             console.log('绑定事件监听器');
             
-            // "开始巡查任务"按钮点击事件
+            // 巡查任务按钮
             startInspectionBtn.addEventListener('click', function() {
                 console.log('点击了开始巡查任务按钮');
-                // 隐藏欢迎弹窗，显示车间选择弹窗
                 welcomeModal.classList.add('hidden');
                 facilityModal.classList.add('active');
             });
             
-            // "上下班打卡"按钮点击事件
+            // 打卡按钮
             clockInOutBtn.addEventListener('click', function() {
                 console.log('点击了上下班打卡按钮');
-                // 隐藏欢迎弹窗，显示打卡弹窗
                 welcomeModal.classList.add('hidden');
                 clockModal.classList.add('active');
-                
-                // 生成打卡二维码（使用客户端生成）
                 generateClockQRCode();
             });
             
-            // 关闭打卡弹窗按钮点击事件
+            // 视频流按钮
+            streamVideoBtn.addEventListener('click', function() {
+                console.log('点击了实时画面推流RTSP按钮');
+                openVideoStreamModal();
+            });
+            
+            // 视频返回按钮
+            videoBackBtn.addEventListener('click', function() {
+                closeVideoStreamModal();
+            });
+            
+            // 关闭打卡弹窗
             closeClockModalBtn.addEventListener('click', function() {
                 console.log('点击了关闭打卡弹窗按钮');
-                // 关闭打卡弹窗，回到欢迎弹窗
                 clockModal.classList.remove('active');
                 welcomeModal.classList.remove('hidden');
             });
             
-            // 车间选择弹窗关闭按钮点击事件
+            // 关闭车间选择弹窗
             facilityCloseBtn.addEventListener('click', function() {
                 console.log('点击了车间弹窗关闭按钮');
-                // 关闭车间选择弹窗，回到欢迎弹窗
                 facilityModal.classList.remove('active');
                 welcomeModal.classList.remove('hidden');
             });
             
-            // 二维码展示页面返回按钮点击事件
+            // 返回选择按钮
             backToFacilityBtn.addEventListener('click', function() {
                 console.log('点击了返回选择按钮');
-                // 隐藏主内容，显示车间选择弹窗
                 mainContainer.classList.remove('active');
                 facilityModal.classList.add('active');
             });
             
-            // 二维码容器点击事件 - 进入设施码模式
+            // 二维码容器点击事件
             qrCodeContainer.addEventListener('click', function() {
                 console.log('点击了二维码容器');
                 
@@ -2584,13 +2824,29 @@
                 }
                 
                 showFacilityQRCode();
-                
-                // 滚动到顶部，确保二维码可见
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             });
             
-            // 下一个按钮点击事件
+            // 下一个按钮
             nextBtn.addEventListener('click', showNextFacilityCode);
+            
+            // 视频流弹窗关闭
+            videoStreamModal.addEventListener('click', function(e) {
+                if (e.target === videoStreamModal) {
+                    closeVideoStreamModal();
+                }
+            });
+            
+            // 视频iframe事件
+            videoIframe1.onload = () => {
+                resetVideoStreamStatus(videoIframe1);
+            };
+            videoIframe2.onload = () => {
+                resetVideoStreamStatus(videoIframe2);
+            };
+            
+            videoIframe1.onerror = () => refreshVideoStream(videoIframe1);
+            videoIframe2.onerror = () => refreshVideoStream(videoIframe2);
             
             // 车间二维码扫描系统事件
             collapseAllBtn.addEventListener('click', function() {
@@ -2609,12 +2865,11 @@
             
             backFromScanBtn.addEventListener('click', function() {
                 console.log('从扫描系统返回');
-                // 隐藏车间二维码扫描系统，显示车间选择弹窗
                 qrScanSystem.classList.remove('active');
                 facilityModal.classList.add('active');
             });
             
-            // 为二维码添加长按保存提示
+            // 长按保存提示
             let pressTimer;
             document.addEventListener('touchstart', function(e) {
                 if (e.target.closest('.qr-code-container-new')) {
@@ -2631,16 +2886,19 @@
             document.addEventListener('touchmove', function() {
                 clearTimeout(pressTimer);
             });
+            
+            // 页面卸载前清理资源
+            window.addEventListener('beforeunload', function() {
+                stopVideoStreamCheck();
+            });
         }
         
-        // 生成打卡二维码（优化版）
+        // ==================== 核心功能函数 ====================
         function generateClockQRCode() {
             console.log('生成打卡二维码');
-            // 更新文本信息
             clockCodeText.textContent = CLOCK_QR_CODE;
             clockUrlText.textContent = CLOCK_QR_URL;
             
-            // 使用客户端生成QR码
             try {
                 const typeNumber = 0;
                 const errorCorrectionLevel = 'L';
@@ -2660,7 +2918,6 @@
                 };
             } catch (error) {
                 console.log('客户端生成失败，使用API生成打卡二维码');
-                // 降级到API方式
                 const qrSize = 250;
                 const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${qrSize}x${qrSize}&data=${encodeURIComponent(CLOCK_QR_URL)}`;
                 
@@ -2682,7 +2939,6 @@
             }
         }
         
-        // 显示设施码（优化版）
         function showFacilityQRCode() {
             console.log('显示设施码');
             if (currentFacilityCodes.length === 0) {
@@ -2690,7 +2946,6 @@
                 return;
             }
             
-            // 如果是第一次进入设施模式，重置索引
             if (!isFacilityMode) {
                 currentFacilityIndex = 0;
                 isFacilityMode = true;
@@ -2698,22 +2953,17 @@
                 actionButtons.style.display = 'flex';
             }
             
-            // 获取当前设施码
             const facilityCode = currentFacilityCodes[currentFacilityIndex];
             
-            // 立即更新显示信息
             instruction.textContent = `设施码 ${currentFacilityIndex + 1}/${currentFacilityCodes.length}`;
             qrTitle.textContent = `${currentBuildingName} - ${facilityCode.name}`;
             qrCodeText.textContent = facilityCode.code;
             qrUrlText.textContent = facilityCode.url;
             
-            // 显示加载状态
             qrImage.innerHTML = '<div class="loading-spinner"></div><p>正在生成二维码...</p>';
             qrImage.className = 'loading';
             
-            // 延迟生成二维码
             setTimeout(() => {
-                // 使用智能生成（缓存+客户端生成）
                 const cacheKey = `${currentBuildingName}_${facilityCode.code}`;
                 generateQRCodeSmart(
                     facilityCode.url, 
@@ -2721,50 +2971,33 @@
                     cacheKey, 
                     'facility'
                 );
-                
-                // 移除加载类
                 qrImage.classList.remove('loading');
             }, 50);
         }
         
-        // 显示下一个设施码（修改版）
         function showNextFacilityCode() {
             console.log('显示下一个设施码');
             if (currentFacilityCodes.length === 0 || !isFacilityMode) {
                 return;
             }
             
-            // 如果当前是最后一个设施码
             if (currentFacilityIndex === currentFacilityCodes.length - 1) {
                 console.log('已到达最后一个设施码，返回车间选择页面');
-                
-                // 显示提示
                 showToast('已查看完所有设施码，返回车间选择页面');
                 
-                // 短暂延迟后返回
                 setTimeout(() => {
-                    // 隐藏主内容，显示车间选择弹窗
                     mainContainer.classList.remove('active');
                     facilityModal.classList.add('active');
-                    
-                    // 重置设施模式
                     resetFacilityMode();
                 }, 10);
-                
                 return;
             }
             
-            // 更新索引
             currentFacilityIndex = currentFacilityIndex + 1;
-            
-            // 显示新的设施码
             showFacilityQRCode();
-            
-            // 滚动到顶部，确保二维码可见
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
         
-        // 重置设施模式
         function resetFacilityMode() {
             isFacilityMode = false;
             currentFacilityIndex = -1;
@@ -2772,14 +3005,12 @@
             actionButtons.style.display = 'none';
             instruction.textContent = '👉🏻 点击屏幕二维码切换到设施码';
             
-            // 重置显示为建筑码
             if (selectedFacility) {
                 qrTitle.textContent = selectedFacility.name;
                 qrCodeText.textContent = selectedFacility.code;
                 const fullUrl = BASE_QR_URL + selectedFacility.code;
                 qrUrlText.textContent = fullUrl;
                 
-                // 显示建筑二维码
                 qrImage.innerHTML = '<div class="loading-spinner"></div><p>正在生成二维码...</p>';
                 qrImage.className = 'loading';
                 
@@ -2795,7 +3026,6 @@
             }
         }
         
-        // 显示提示信息
         function showToast(message) {
             toast.textContent = message;
             toast.classList.add('show');
@@ -2805,30 +3035,24 @@
             }, 3000);
         }
         
-        // 复制到剪贴板函数
         function copyToClipboard(text) {
-            // 检查是否支持clipboard API
             if (navigator.clipboard && window.isSecureContext) {
                 navigator.clipboard.writeText(text).then(function() {
                     showToast('链接已复制到剪贴板！');
                     console.log('链接已复制:', text);
                 }).catch(function(err) {
                     console.error('复制失败:', err);
-                    // 备用方法
                     fallbackCopyText(text);
                 });
             } else {
-                // 使用备用方法
                 fallbackCopyText(text);
             }
         }
         
-        // 备用复制方法
         function fallbackCopyText(text) {
             const textArea = document.createElement('textarea');
             textArea.value = text;
             
-            // 防止屏幕滚动
             textArea.style.position = 'fixed';
             textArea.style.left = '-999999px';
             textArea.style.top = '-999999px';
