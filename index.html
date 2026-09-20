@@ -2416,8 +2416,14 @@
                     alert('当前选择的部位暂无设施码信息');
                     return;
                 }
-                
-                showFacilityQRCode();
+            
+                if (!isFacilityMode) {
+                    // 建筑码模式：点击进入设施码（原有逻辑不变）
+                    showFacilityQRCode();
+                } else {
+                    // 设施码模式：点击二维码直接切下一个设施码
+                    showNextFacilityCode();
+                }
                 
                 // 滚动到顶部，确保二维码可见
                 window.scrollTo({ top: 0, behavior: 'smooth' });
