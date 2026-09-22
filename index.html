@@ -2430,7 +2430,10 @@
             });
             
             // 下一个按钮点击事件
-            nextBtn.addEventListener('click', showNextFacilityCode);
+            nextBtn.addEventListener('click', function(e){
+                e.stopPropagation(); // 阻止事件冒泡，不会触发外层qrCodeContainer点击
+                showNextFacilityCode();
+            });
             
             // 车间二维码扫描系统事件
             collapseAllBtn.addEventListener('click', function() {
