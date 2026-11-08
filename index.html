@@ -39,7 +39,7 @@
 
         .loading-logo {
             font-size: 3rem;
-            color: var(--primary-color, #6366f1);
+            color: var(--primary-color, #3b82f6);
             margin-bottom: 2rem;
             animation: pulse 2s infinite;
         }
@@ -66,8 +66,8 @@
         }
 
         .spinner-circle-outer {
-            border-top: 4px solid var(--primary-color, #6366f1);
-            border-right: 4px solid var(--primary-color, #6366f1);
+            border-top: 4px solid var(--primary-color, #3b82f6);
+            border-right: 4px solid var(--primary-color, #3b82f6);
             border-bottom: 4px solid transparent;
             border-left: 4px solid transparent;
             animation: spin 1s linear infinite;
@@ -78,8 +78,8 @@
             left: 10px;
             width: 60px;
             height: 60px;
-            border-top: 4px solid var(--secondary-color, #8b5cf6);
-            border-right: 4px solid var(--secondary-color, #8b5cf6);
+            border-top: 4px solid var(--secondary-color, #0ea5e9);
+            border-right: 4px solid var(--secondary-color, #0ea5e9);
             border-bottom: 4px solid transparent;
             border-left: 4px solid transparent;
             animation: spin 0.8s linear infinite reverse;
@@ -97,7 +97,7 @@
         .loading-progress-bar {
             height: 100%;
             width: 0%;
-            background: linear-gradient(90deg, var(--primary-color, #6366f1), var(--secondary-color, #8b5cf6));
+            background: linear-gradient(90deg, var(--primary-color, #3b82f6), var(--secondary-color, #0ea5e9));
             border-radius: 2px;
             transition: width 0.3s ease;
         }
@@ -193,8 +193,8 @@
         }
         
         :root {
-            --primary-color: #6366f1;
-            --primary-dark: #4f46e5;
+            --primary-color: #3b82f6;
+            --primary-dark: #2563eb;
             --bg-dark: #0f172a;
             --bg-card: #1e293b;
             --bg-card-light: #334155;
@@ -205,14 +205,14 @@
             --success-color: #10b981;
             --warning-color: #f59e0b;
             --collapse-color: #ef4444; /* 新增：折叠按钮颜色 */
-            --secondary-color: #8b5cf6;
+            --secondary-color: #0ea5e9;
             --darker-bg: #020617;
             --text-muted: #64748b;
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.7);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.8);
             --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.9);
-            --gradient-primary: linear-gradient(135deg, #6366f1, #8b5cf6);
+            --gradient-primary: linear-gradient(135deg, #3b82f6, #0ea5e9);
             --gradient-dark: linear-gradient(135deg, #1e293b, #0f172a);
             --radius-sm: 8px;
             --radius-md: 12px;
@@ -227,8 +227,8 @@
             padding: 16px;
             min-height: 100vh;
             background-image: 
-                radial-gradient(circle at 20% 30%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 70%, rgba(79, 70, 229, 0.08) 0%, transparent 50%);
+                radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(37, 99, 235, 0.08) 0%, transparent 50%);
         }
         
         /* 欢迎弹窗样式 */
@@ -258,7 +258,7 @@
             width: 90%;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
             text-align: center;
-            border: 2px solid var(--primary-color);
+            border: 2px solid #6366f1;
             animation: modalAppear 0.5s ease-out;
         }
         
@@ -277,12 +277,14 @@
             font-size: 4rem;
             color: var(--primary-color);
             margin-bottom: 20px;
+            text-shadow: 0 2px 0 rgba(0, 0, 0, 0.85), 0 6px 14px rgba(0, 0, 0, 0.6);
         }
         
         .modal-title {
             font-size: 2rem;
             color: var(--text-primary);
             margin-bottom: 10px;
+            text-shadow: 0 1px 0 #0b1220, 0 2px 0 #0b1220, 0 3px 0 #0b1220, 0 8px 16px rgba(0, 0, 0, 0.6);
         }
         
         .modal-subtitle {
@@ -290,6 +292,10 @@
             font-size: 1.1rem;
             margin-bottom: 30px;
             line-height: 1.5;
+        }
+
+        .subtitle-emoji {
+            text-shadow: 0 1px 0 rgba(0, 0, 0, 0.7), 0 2px 6px rgba(0, 0, 0, 0.5);
         }
         
         .modal-buttons {
@@ -333,11 +339,12 @@
         .modal-btn.clock:hover {
             background-color: var(--primary-dark);
             transform: translateY(-4px);
-            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
         }
         
         .modal-btn i {
             font-size: 1.3rem;
+            text-shadow: 0 1px 0 rgba(0, 0, 0, 0.55), 0 3px 8px rgba(0, 0, 0, 0.45);
         }
         
         /* 打卡弹窗样式 */
@@ -509,6 +516,7 @@
         .facility-modal-title {
             font-size: 1.8rem;
             color: var(--text-primary);
+            text-shadow: 0 1px 0 #0b1220, 0 2px 0 #0b1220, 0 4px 10px rgba(0, 0, 0, 0.55);
             margin-bottom: 10px;
             display: flex;
             align-items: center;
@@ -519,6 +527,7 @@
         .facility-modal-subtitle {
             color: var(--text-secondary);
             font-size: 1rem;
+            text-shadow: 0 1px 0 rgba(0, 0, 0, 0.7), 0 2px 5px rgba(0, 0, 0, 0.5);
         }
         
         .facility-close-btn {
@@ -575,6 +584,7 @@
             min-height: 100px;
             position: relative;
             overflow: hidden;
+            text-shadow: 0 1px 0 rgba(0, 0, 0, 0.75), 0 2px 6px rgba(0, 0, 0, 0.55);
         }
         
         .facility-btn::before {
@@ -592,7 +602,7 @@
         .facility-btn:hover {
             background-color: var(--primary-color);
             transform: translateY(-6px);
-            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
         }
         
         .facility-btn:hover::before {
@@ -602,7 +612,7 @@
         .facility-btn.active {
             background-color: var(--primary-color);
             color: white;
-            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
         }
         
         .facility-btn.active::before {
@@ -661,6 +671,7 @@
             align-items: center;
             justify-content: center;
             gap: 12px;
+            text-shadow: 0 1px 0 #0b1220, 0 2px 0 #0b1220, 0 4px 10px rgba(0, 0, 0, 0.55);
         }
         
         .qr-display-header {
@@ -697,13 +708,14 @@
             font-size: 0.95rem;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
             white-space: nowrap;
+            text-shadow: 0 1px 0 rgba(0, 0, 0, 0.7), 0 3px 8px rgba(0, 0, 0, 0.5);
         }
         
         .back-to-facility-btn:hover {
             background-color: var(--primary-color);
             color: white;
             transform: translateY(-3px);
-            box-shadow: 0 6px 18px rgba(99, 102, 241, 0.4);
+            box-shadow: 0 6px 18px rgba(59, 130, 246, 0.4);
         }
         
         .back-to-facility-btn i {
@@ -735,7 +747,7 @@
         
         .qr-code-container.facility-mode-active {
             border: 2px solid var(--primary-color);
-            box-shadow: 0 12px 30px rgba(99, 102, 241, 0.3);
+            box-shadow: 0 12px 30px rgba(59, 130, 246, 0.3);
         }
         
         .qr-placeholder {
@@ -790,7 +802,7 @@
             border-radius: 20px;
             font-size: 0.8rem;
             font-weight: 600;
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
             z-index: 5;
             display: none;
         }
@@ -815,6 +827,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            text-shadow: 0 1px 0 #0b1220, 0 2px 0 #0b1220, 0 4px 10px rgba(0, 0, 0, 0.55);
         }
         
         .qr-title-count {
@@ -845,6 +858,7 @@
             white-space: nowrap;
             width: 100%;
             border: 1px solid var(--border-color);
+            text-shadow: 0 1px 0 rgba(0, 0, 0, 0.7), 0 3px 8px rgba(0, 0, 0, 0.5);
         }
         
         .qr-url-container {
@@ -857,6 +871,7 @@
             color: var(--text-secondary);
             margin-bottom: 8px;
             text-align: left;
+            text-shadow: 0 1px 0 rgba(0, 0, 0, 0.7), 0 3px 8px rgba(0, 0, 0, 0.5);
         }
         
         .qr-url {
@@ -873,6 +888,7 @@
             text-align: left;
             border: 1px solid var(--border-color);
             line-height: 1.5;
+            text-shadow: 0 1px 0 rgba(0, 0, 0, 0.7), 0 3px 8px rgba(0, 0, 0, 0.5);
         }
         
         .instruction {
@@ -881,6 +897,7 @@
             margin-top: 16px;
             text-align: center;
             padding: 0 10px;
+            text-shadow: 0 1px 0 rgba(0, 0, 0, 0.7), 0 3px 8px rgba(0, 0, 0, 0.5);
         }
         
         .loading {
@@ -928,17 +945,18 @@
             flex: 1;
             max-width: 200px;
             font-size: 1rem;
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
+            text-shadow: 0 1px 0 rgba(0, 0, 0, 0.7), 0 3px 8px rgba(0, 0, 0, 0.5);
         }
         
         .action-btn:hover {
             background-color: var(--primary-dark);
             transform: translateY(-3px);
-            box-shadow: 0 6px 18px rgba(99, 102, 241, 0.4);
+            box-shadow: 0 6px 18px rgba(59, 130, 246, 0.4);
         }
         
         .action-btn.next {
@@ -1150,7 +1168,7 @@
             justify-content: center;
             font-size: 20px;
             color: white;
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
         }
         
         /* 分类标题 */
@@ -1351,6 +1369,84 @@
         .toast.show {
             transform: translateX(-50%) translateY(0);
             opacity: 1;
+        }
+        
+        /* 到底提示弹窗 */
+        .tip-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(2, 6, 23, 0.78);
+            z-index: 1003;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(4px);
+        }
+        
+        .tip-modal.active {
+            display: flex;
+        }
+        
+        .tip-modal-content {
+            background-color: var(--bg-card);
+            border: 2px solid var(--primary-color);
+            border-radius: var(--radius-lg);
+            padding: 26px 28px 22px;
+            width: 90%;
+            max-width: 340px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            animation: modalAppear 0.3s ease-out;
+        }
+        
+        .tip-modal-badge {
+            width: 46px;
+            height: 46px;
+            margin: 0 auto 14px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            background: var(--warning-color);
+            box-shadow: 0 6px 16px rgba(245, 158, 11, 0.35);
+        }
+        
+        .tip-modal-title {
+            font-size: 1.2rem;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+        
+        .tip-modal-desc {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .tip-modal-btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: var(--radius-md);
+            background: var(--gradient-primary);
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .tip-modal-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
         }
         
         /* 手机优化 */
@@ -1600,6 +1696,255 @@
             display: flex;
             justify-content: center;
         }
+        
+        /* ============================================================
+           视觉优化 v1：品牌蓝配色 / 二维码卡片重做 / 上下切换按钮
+           仅覆盖样式，不改变任何业务逻辑
+           ============================================================ */
+
+        /* ---- 弹窗卡片：细描边 + 双层阴影，去掉霓虹边框 ---- */
+        .modal-content {
+            border: 1px solid rgba(59, 130, 246, 0.30);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35), 0 30px 60px rgba(0, 0, 0, 0.55);
+        }
+
+        .facility-modal-content {
+            border: 1px solid rgba(59, 130, 246, 0.28);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35), 0 30px 60px rgba(0, 0, 0, 0.55);
+        }
+
+        /* ---- 二维码主卡片 ---- */
+        .qr-code-container {
+            max-width: 360px;
+            padding: 22px 22px 18px;
+            border-radius: 20px;
+            background: linear-gradient(180deg, #26334a 0%, #1b2536 100%);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35), 0 24px 48px rgba(0, 0, 0, 0.50);
+        }
+
+        .qr-code-container:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35), 0 28px 56px rgba(0, 0, 0, 0.55);
+        }
+
+        .qr-code-container.facility-mode-active {
+            border: 1px solid rgba(59, 130, 246, 0.55);
+            box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.15), 0 2px 8px rgba(0, 0, 0, 0.35), 0 26px 52px rgba(37, 99, 235, 0.25);
+        }
+
+        /* 白色二维码块：去灰边，改圆角 + 内阴影 + 柔和外发光 */
+        .qr-placeholder {
+            background: #ffffff;
+            border: none;
+            border-radius: 16px;
+            padding: 12px;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.30), 0 0 0 1px rgba(255, 255, 255, 0.05);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .qr-placeholder:hover {
+            border: none;
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.36), 0 0 0 1px rgba(59, 130, 246, 0.35);
+        }
+
+        /* ---- 码值：等宽字体栈 + 字距 ---- */
+        .qr-code {
+            font-family: ui-monospace, "SFMono-Regular", "Cascadia Mono", "Consolas", "Liberation Mono", monospace;
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            background-color: rgba(2, 6, 23, 0.55);
+            color: #e2e8f0;
+        }
+
+        /* ---- 链接：单行省略 + 复制按钮 ---- */
+        .qr-url-label {
+            font-size: 0.78rem;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .qr-url-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .qr-url {
+            flex: 1 1 auto;
+            min-width: 0;
+            width: auto;
+            font-family: ui-monospace, "SFMono-Regular", "Cascadia Mono", "Consolas", "Liberation Mono", monospace;
+            font-size: 0.78rem;
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            background-color: rgba(2, 6, 23, 0.45);
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-height: none;
+            word-break: normal;
+            line-height: 1.5;
+        }
+
+        .qr-copy-btn {
+            flex: 0 0 auto;
+            width: 38px;
+            height: 38px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.10);
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--text-secondary);
+            text-shadow: 0 1px 0 rgba(0, 0, 0, 0.6), 0 2px 6px rgba(0, 0, 0, 0.45);
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .qr-copy-btn:hover {
+            background: rgba(59, 130, 246, 0.18);
+            border-color: rgba(59, 130, 246, 0.50);
+            color: #dbeafe;
+        }
+
+        .qr-copy-btn:active {
+            transform: scale(0.94);
+        }
+
+        /* ---- 操作按钮：上一个（幽灵）/ 下一个（主色） ---- */
+        .action-buttons {
+            max-width: 100%;
+            gap: 10px;
+        }
+
+        .action-btn {
+            font-size: 0.95rem;
+            border-radius: 12px;
+            white-space: nowrap;
+        }
+
+        .action-btn:active {
+            transform: scale(0.98);
+        }
+
+        .action-btn.prev {
+            flex: 0 0 auto;
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: var(--text-secondary);
+            box-shadow: none;
+        }
+
+        .action-btn.prev:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: #ffffff;
+            box-shadow: none;
+            transform: translateY(-2px);
+        }
+
+        .action-btn.next {
+            background: var(--gradient-primary);
+            box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
+        }
+
+        .action-btn.next:hover {
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            box-shadow: 0 8px 22px rgba(37, 99, 235, 0.45);
+        }
+
+        .tip-modal-content {
+            border: 1px solid rgba(59, 130, 246, 0.35);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35), 0 30px 60px rgba(0, 0, 0, 0.55);
+        }
+
+        /* ---- 设施图标 ---- */
+        .facility-btn .facility-icon {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            color: var(--primary-color);
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+            text-shadow: 0 1px 0 rgba(0, 0, 0, 0.85), 0 3px 8px rgba(0, 0, 0, 0.6);
+        }
+
+        .facility-btn:hover .facility-icon,
+        .facility-btn.active .facility-icon {
+            color: #ffffff;
+        }
+
+        .facility-btn .facility-icon-svg {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .facility-btn .facility-svg {
+            display: block;
+            width: 24px;
+            height: 24px;
+            fill: none;
+            stroke: var(--primary-color);
+            stroke-width: 2;
+            filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.85)) drop-shadow(0 3px 6px rgba(0, 0, 0, 0.55));
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            transition: stroke 0.3s ease;
+        }
+
+        .facility-btn:hover .facility-svg,
+        .facility-btn.active .facility-svg {
+            stroke: #ffffff;
+            filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.55)) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.45));
+        }
+
+        #qr-title-text {
+            display: inline-flex;
+            align-items: center;
+            line-height: 1;
+        }
+
+        .qr-title .facility-svg {
+            display: block;
+            width: 20px;
+            height: 20px;
+            margin-right: 6px;
+            flex: 0 0 auto;
+            vertical-align: middle;
+            filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.85)) drop-shadow(0 3px 6px rgba(0, 0, 0, 0.55));
+            fill: var(--primary-color);
+        }
+
+        .qr-title .facility-svg.line {
+            fill: none;
+            stroke: var(--primary-color);
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .qr-title-icon {
+            margin-right: 8px;
+            font-size: 1.1rem;
+            color: var(--primary-color);
+        }
+
+        /* ---- 提示 toast 提升层级 ---- */
+        .toast {
+            z-index: 1004;
+            border: 1px solid rgba(255, 255, 255, 0.10);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+        }
     </style>
 </head>
 <body>
@@ -1625,7 +1970,7 @@
                 <i class="fas fa-shield-alt"></i>
             </div>
             <h1 class="modal-title">消防设施巡查系统</h1>
-            <p class="modal-subtitle">KingLong 消防设施巡查系统<br>♨️ 低调使用</p>
+            <p class="modal-subtitle">KingLong 消防设施巡查系统<br><span class="subtitle-emoji">♨️</span> 低调使用</p>
             
             <div class="modal-buttons">
                 <button class="modal-btn inspection" id="startInspectionBtn">
@@ -1718,11 +2063,19 @@
                             <div class="qr-title" id="qr-title"><span id="qr-title-text">请选择车间或设施</span><span class="qr-title-count" id="qrTitleCount" style="display:none;"></span></div>
                             <div class="qr-code" id="qr-code-text">B0000000000000</div>
                             <div class="qr-url-container">
-                                <div class="qr-url-label">访问链接：</div>
-                                <div class="qr-url" id="qr-url-text">https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000000000000</div>
+                                <div class="qr-url-label">访问链接</div>
+                                <div class="qr-url-row">
+                                    <div class="qr-url" id="qr-url-text">https://zhxf.fj.119.gov.cn:8081/xgj/gzfw?qr=B0000000000000</div>
+                                    <button class="qr-copy-btn" id="copy-url-btn" type="button" title="复制链接" aria-label="复制链接">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
                             </div>
                             
                             <div class="action-buttons" id="action-buttons" style="display: none;">
+                                <button class="action-btn prev" id="prev-btn">
+                                    <i class="fas fa-arrow-left"></i> 上一个
+                                </button>
                                 <button class="action-btn next" id="next-btn">
                                     <i class="fas fa-arrow-right"></i> 下一个设施码
                                 </button>
@@ -1772,7 +2125,18 @@
                 <p>KingLong 车间二维码扫描系统 &copy; 2026</p>
             </div>
         </footer>
-        <div class="toast" id="toast"></div>
+    </div>
+    
+    <div class="toast" id="toast"></div>
+    
+    <!-- 到底提示弹窗（置于页面顶层，确保主界面也能弹出） -->
+    <div class="tip-modal" id="tipModal">
+        <div class="tip-modal-content">
+            <div class="tip-modal-badge">!</div>
+            <h3 class="tip-modal-title" id="tipModalTitle">已经到底了</h3>
+            <p class="tip-modal-desc" id="tipModalDesc">这已经是最后一个设施码</p>
+            <button class="tip-modal-btn" id="tipModalBtn">知道了</button>
+        </div>
     </div>
 
     <script>
@@ -4137,6 +4501,8 @@ var qrcode = function() {
         const qrImage = document.getElementById('qr-image');
         const actionButtons = document.getElementById('action-buttons');
         const nextBtn = document.getElementById('next-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const copyUrlBtn = document.getElementById('copy-url-btn');
         const instruction = document.getElementById('instruction');
         
         // 车间二维码扫描系统页面元素
@@ -4144,6 +4510,14 @@ var qrcode = function() {
         const backFromScanBtn = document.getElementById('backFromScanBtn');
         const categoryContainer = document.getElementById('categoryContainer');
         const toast = document.getElementById('toast');
+        
+        // 到底提示弹窗元素
+        const tipModal = document.getElementById('tipModal');
+        const tipModalContent = document.querySelector('.tip-modal-content');
+        const tipModalTitle = document.getElementById('tipModalTitle');
+        const tipModalDesc = document.getElementById('tipModalDesc');
+        const tipModalBtn = document.getElementById('tipModalBtn');
+        let tipModalTimer = null;
         
         // 打卡QR码信息
         const CLOCK_QR_CODE = "S0000007287810";
@@ -4454,6 +4828,64 @@ var qrcode = function() {
             }, 300);
         });
         
+        // 设施 / 建筑图标映射（Font Awesome）
+        const FACILITY_ICON_RULES = [
+            ['灭火器', 'fa-fire-extinguisher'],
+            ['消火栓', 'fa-water'],
+            ['疏散指示', 'fa-person-running'],
+            ['疏散楼梯', 'fa-stairs'],
+            ['疏散通道', 'fa-route'],
+            ['安全出口', 'fa-door-open'],
+            ['应急照明', 'fa-lightbulb'],
+            ['配电箱', 'fa-bolt'],
+            ['微型消防站', 'fa-house-fire'],
+            ['消防控制室', 'fa-tower-broadcast'],
+            ['充电桩', 'fa-charging-station'],
+            ['清洁楼', 'fa-broom'],
+            ['污水处理', 'fa-water'],
+            ['动力站', 'fa-gears'],
+            ['客户服务', 'fa-headset'],
+            ['办公楼', 'fa-building'],
+            ['车间', 'fa-industry'],
+            ['设施', 'fa-qrcode']
+        ];
+
+        // 按名称匹配图标，未命中时用通用二维码图标
+        function facilityIcon(name) {
+            const n = String(name || '');
+            for (let i = 0; i < FACILITY_ICON_RULES.length; i++) {
+                if (n.indexOf(FACILITY_ICON_RULES[i][0]) !== -1) {
+                    return FACILITY_ICON_RULES[i][1];
+                }
+            }
+            return 'fa-qrcode';
+        }
+
+        // 设施专属图标（Material Symbols 路径，Apache-2.0，内嵌无外网依赖）
+        const FACILITY_SVG = {
+            '灭火器': '<svg class="facility-svg line" viewBox="0 0 24 24" aria-hidden="true"><rect x="8.4" y="8.6" width="7.2" height="11.4" rx="1.6"/><path d="M12 8.6V7.4"/><rect x="9.9" y="5.8" width="4.2" height="1.6" rx="0.6"/><path d="M14.1 6.6h3.4"/><path d="M9.9 6.6H8.2"/></svg>',
+            '消火栓': '<svg class="facility-svg line" viewBox="0 0 24 24" aria-hidden="true"><path d="M9.2 6.8a2.8 2.4 0 0 1 5.6 0"/><path d="M12 4.4V2.8"/><rect x="9.6" y="6.8" width="4.8" height="11.4" rx="1"/><path d="M9.6 10.6H8.4M14.4 10.6h1.2"/><circle cx="6.9" cy="10.6" r="1.5"/><circle cx="17.1" cy="10.6" r="1.5"/><path d="M7.4 19.8h9.2"/></svg>',
+            '疏散指示': '<svg class="facility-svg line" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.6" y="7.6" width="18.8" height="8.8" rx="1.2"/><path d="M7.4 12h6.4"/><path d="M11.8 9.8 14.6 12 11.8 14.2"/></svg>',
+            '疏散楼梯': '<svg class="facility-svg line" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4.4v-3.6h4.4v-3.6h4.4v-3.6h4.4"/><path d="M6.2 18.2 18.6 5.8"/></svg>',
+            '疏散通道': '<svg class="facility-svg line" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.6 8.4h18.8M2.6 15.6h18.8"/><path d="M7.2 12h6.6"/><path d="M11.4 9.8 13.8 12 11.4 14.2"/></svg>',
+            '应急照明': '<svg class="facility-svg line" viewBox="0 0 24 24" aria-hidden="true"><rect x="4.2" y="13" width="15.6" height="8" rx="1.8"/><circle cx="7.7" cy="6.6" r="2.9"/><circle cx="16.3" cy="6.6" r="2.9"/><path d="M7.7 9.5v3.5M16.3 9.5v3.5"/><path d="M12 17h.01"/></svg>',
+            '安全出口': '<svg class="facility-svg line" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.4 3.6h11.2v17.2"/><circle cx="12.4" cy="8.2" r="1.6"/><path d="M12.4 10.2 10.4 14.2"/><path d="M12.4 10.4 14.6 12.4"/><path d="M10.4 14.2 12.6 17.4"/><path d="M10.4 14.2 8.4 17.2"/></svg>',
+            '配电箱': '<svg class="facility-svg line" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.6" y="4.4" width="16.8" height="15.2" rx="1.2"/><rect x="6" y="6.6" width="2.6" height="2.2" rx="0.4"/><rect x="9.3" y="6.6" width="2.6" height="2.2" rx="0.4"/><rect x="12.6" y="6.6" width="2.6" height="2.2" rx="0.4"/><rect x="15.9" y="6.6" width="2.6" height="2.2" rx="0.4"/><path d="M5.2 11.6h13.6"/><path d="M7 15h10"/></svg>',
+            '消防控制室': '<svg class="facility-svg line" viewBox="0 0 24 24" aria-hidden="true"><rect x="5.6" y="2.8" width="12.8" height="18.4" rx="1"/><rect x="7.6" y="5.2" width="8.8" height="4.4" rx="0.6"/><path d="M5.6 11.6h12.8"/><path d="M8.6 13.8h.01M12 13.8h.01M15.4 13.8h.01"/><path d="M7.6 17h4.6"/></svg>',
+            '微型消防站': '<svg class="facility-svg line" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.6" y="3.2" width="16.8" height="17.6" rx="1"/><path d="M12 3.2v17.6"/><path d="M5.8 8.4a2.6 2.3 0 0 1 5.2 0"/><path d="M5 8.4h6.8"/><rect x="14" y="7.4" width="3.2" height="5.4" rx="1"/><path d="M15.5 7.4v-1M14.8 6.4h1.4"/></svg>',
+            '车间': '<svg class="facility-svg line" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.6" y="7.4" width="16.8" height="2.2" rx="0.3"/><path d="M3.6 9.6v11h16.8V9.6"/><rect x="15" y="2.6" width="2.8" height="4.8" rx="0.3"/><rect x="6.2" y="12" width="2.6" height="2.6" rx="0.2"/><rect x="10.7" y="12" width="2.6" height="2.6" rx="0.2"/><rect x="15.2" y="12" width="2.6" height="2.6" rx="0.2"/><rect x="8.4" y="16.2" width="5.2" height="4.4" rx="0.3"/></svg>',
+        };
+
+        function facilityIconSVG(name) {
+            const n = String(name || '');
+            if (FACILITY_SVG[n]) return FACILITY_SVG[n];
+            for (const key in FACILITY_SVG) {
+                if (n.indexOf(key) !== -1) return FACILITY_SVG[key];
+            }
+            return '';
+        }
+
+
         // 初始化车间选择弹窗按钮
         function initializeFacilityButtons() {
             console.log('初始化车间按钮');
@@ -4466,16 +4898,24 @@ var qrcode = function() {
                 button.dataset.name = facility.name;
                 button.dataset.type = facility.type;
                 
-                // 创建按钮内容
+                // 创建按钮内容（图标 + 名称 + 类型）
+                const iconSvg = facilityIconSVG(facility.name);
+                let iconEl;
+                if (iconSvg) {
+                    iconEl = document.createElement('span');
+                    iconEl.className = 'facility-icon facility-icon-svg';
+                    iconEl.innerHTML = iconSvg;
+                } else {
+                    iconEl = document.createElement('i');
+                    iconEl.className = 'fas ' + facilityIcon(facility.name) + ' facility-icon';
+                }
+                
                 const nameSpan = document.createElement('span');
                 nameSpan.textContent = facility.name;
                 
-                const typeSpan = document.createElement('span');
-                typeSpan.className = 'type-tag';
-                typeSpan.textContent = facility.type;
                 
+                button.appendChild(iconEl);
                 button.appendChild(nameSpan);
-                button.appendChild(typeSpan);
                 
                 // 点击直接进入二维码展示页面
                 button.addEventListener('click', function() {
@@ -4513,16 +4953,16 @@ var qrcode = function() {
             specialButton.className = 'facility-btn';
             specialButton.id = 'superSteelFacilityBtn';
             
-            // 创建按钮内容
+            // 创建按钮内容（图标 + 名称 + 类型）
+            const iconEl2 = document.createElement('i');
+            iconEl2.className = 'fas fa-layer-group facility-icon';
+            
             const nameSpan = document.createElement('span');
             nameSpan.textContent = '超纲设施码';
             
-            const typeSpan = document.createElement('span');
-            typeSpan.className = 'type-tag';
-            typeSpan.textContent = '地上一层';
             
+            specialButton.appendChild(iconEl2);
             specialButton.appendChild(nameSpan);
-            specialButton.appendChild(typeSpan);
             
             // 点击进入车间二维码扫描系统
             specialButton.addEventListener('click', function() {
@@ -4765,6 +5205,32 @@ var qrcode = function() {
                 e.stopPropagation(); // 阻止事件冒泡，不会触发外层qrCodeContainer点击
                 showNextFacilityCode();
             });
+
+            // 上一个按钮点击事件（复用已有 showPrevFacilityCode）
+            prevBtn.addEventListener('click', function(e){
+                e.stopPropagation();
+                showPrevFacilityCode();
+            });
+
+            // 复制链接按钮（复用已有 copyToClipboard）
+            copyUrlBtn.addEventListener('click', function(e){
+                e.stopPropagation();
+                copyToClipboard(qrUrlText.textContent.trim());
+            });
+            
+            // 到底提示弹窗：按钮关闭、点遮罩关闭、点内容不关闭
+            tipModalBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                hideTipModal();
+            });
+            
+            tipModalContent.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+            
+            tipModal.addEventListener('click', function() {
+                hideTipModal();
+            });
             
             // 键盘左右方向键切换设施码（Windows桌面）
             document.addEventListener('keydown', function(e) {
@@ -4867,7 +5333,8 @@ var qrcode = function() {
         // 更新建筑码显示
         function updateBuildingQRDisplay(name, code, type) {
             console.log('更新建筑码显示:', name, code);
-            qrTitleText.textContent = name;
+            const buildingSvg = facilityIconSVG(name);
+            qrTitleText.innerHTML = (buildingSvg || '<i class="fas ' + facilityIcon(name) + ' qr-title-icon"></i>') + name;
             qrTitleCount.textContent = `共${currentFacilityCodes.length}个`;
             qrTitleCount.style.display = 'inline-block';
             qrCodeText.textContent = code;
@@ -4902,7 +5369,9 @@ var qrcode = function() {
             
             // 更新显示
             instruction.textContent = `设施码 ${currentFacilityIndex + 1}/${currentFacilityCodes.length}`;
-            qrTitleText.textContent = `${currentBuildingName} - ${facilityCode.name}`;
+            const facilitySvg = facilityIconSVG(facilityCode.name);
+            qrTitleText.innerHTML = (facilitySvg || '<i class="fas ' + facilityIcon(facilityCode.name) + ' qr-title-icon"></i>') +
+                facilityCode.name;
             qrTitleCount.style.display = 'none';
             qrCodeText.textContent = facilityCode.code;
             qrUrlText.textContent = facilityCode.url;
@@ -4919,8 +5388,14 @@ var qrcode = function() {
                 return;
             }
             
-            // 更新索引（循环）
-            currentFacilityIndex = (currentFacilityIndex + 1) % currentFacilityCodes.length;
+            // 已经是最后一个设施码：不再循环，弹出到底提示
+            if (currentFacilityIndex >= currentFacilityCodes.length - 1) {
+                showTipModal('已经到底了', '当前已是最后一个设施码（' + (currentFacilityIndex + 1) + '/' + currentFacilityCodes.length + '）');
+                return;
+            }
+            
+            // 更新索引（顺序前进）
+            currentFacilityIndex = currentFacilityIndex + 1;
             
             // 显示新的设施码
             showFacilityQRCode();
@@ -4936,8 +5411,14 @@ var qrcode = function() {
                 return;
             }
             
-            // 更新索引（循环）
-            currentFacilityIndex = (currentFacilityIndex - 1 + currentFacilityCodes.length) % currentFacilityCodes.length;
+            // 已经是第一个设施码：不再往前，弹出到头提示
+            if (currentFacilityIndex <= 0) {
+                showTipModal('已经到最前了', '当前已是第一个设施码（1/' + currentFacilityCodes.length + '）');
+                return;
+            }
+
+            // 更新索引（顺序后退）
+            currentFacilityIndex = currentFacilityIndex - 1;
             
             // 显示新的设施码
             showFacilityQRCode();
@@ -4954,6 +5435,21 @@ var qrcode = function() {
             setTimeout(() => {
                 toast.classList.remove('show');
             }, 3000);
+        }
+        
+        // 到底提示弹窗
+        function showTipModal(title, desc) {
+            tipModalTitle.textContent = title;
+            tipModalDesc.textContent = desc;
+            tipModal.classList.add('active');
+            
+            clearTimeout(tipModalTimer);
+            tipModalTimer = setTimeout(hideTipModal, 2500);
+        }
+        
+        function hideTipModal() {
+            clearTimeout(tipModalTimer);
+            tipModal.classList.remove('active');
         }
         
         // 复制到剪贴板函数
@@ -5006,5 +5502,3 @@ var qrcode = function() {
     </script>
 </body>
 </html>
-
-
